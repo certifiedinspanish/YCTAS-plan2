@@ -1,0 +1,134 @@
+[
+{
+"time": 0.98,
+"type": "country",
+"key": "argentina"
+},
+{
+"time": 2.73,
+"type": "country",
+"key": "bolivia"
+},
+{
+"time": 4.62,
+"type": "country",
+"key": "chile"
+},
+{
+"time": 6.45,
+"type": "country",
+"key": "colombia"
+},
+{
+"time": 7.57,
+"type": "verse",
+"verse": 2
+},
+{
+"time": 8.23,
+"type": "country",
+"key": "costa_rica"
+},
+{
+"time": 9.86,
+"type": "country",
+"key": "cuba"
+},
+{
+"time": 11.34,
+"type": "country",
+"key": "ecuador"
+},
+{
+"time": 13.03,
+"type": "country",
+"key": "el_salvador"
+},
+{
+"time": 14.07,
+"type": "verse",
+"verse": 3
+},
+{
+"time": 15.21,
+"type": "country",
+"key": "espana"
+},
+{
+"time": 17.01,
+"type": "country",
+"key": "guatemala"
+},
+{
+"time": 18.82,
+"type": "country",
+"key": "honduras"
+},
+{
+"time": 20.67,
+"type": "country",
+"key": "mexico"
+},
+{
+"time": 21.92,
+"type": "verse",
+"verse": 4
+},
+{
+"time": 22.57,
+"type": "country",
+"key": "nicaragua"
+},
+{
+"time": 24.22,
+"type": "country",
+"key": "panama"
+},
+{
+"time": 26.13,
+"type": "country",
+"key": "paraguay"
+},
+{
+"time": 28.04,
+"type": "country",
+"key": "peru"
+},
+{
+"time": 29.29,
+"type": "verse",
+"verse": 5
+},
+{
+"time": 31.07,
+"type": "country",
+"key": "puerto_rico"
+},
+{
+"time": 33.1,
+"type": "clap"
+},
+{
+"time": 34.56,
+"type": "country",
+"key": "republica_dominicana"
+},
+{
+"time": 39.22,
+"type": "clap"
+},
+{
+"time": 40.19,
+"type": "country",
+"key": "uruguay"
+},
+{
+"time": 42.4,
+"type": "clap"
+},
+{
+"time": 43.62,
+"type": "country",
+"key": "venezuela"
+}
+]
