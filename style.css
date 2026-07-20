@@ -60,7 +60,7 @@ body{
   font-size:13px;color:var(--coral);background:rgba(255,90,95,0.10);border-radius:10px;
   padding:8px 10px;margin-bottom:12px;
 }
-.acct-error.ok{color:var(--green);background:rgba(47,190,115,0.10);}
+.acct-error.ok{color:var(--green);background:rgba(47,190,115,0.10);font-weight:800;font-size:14px;}
 .acct-input{
   width:100%;padding:11px 12px;border-radius:12px;border:2px solid var(--line);
   font-size:14px;margin-bottom:10px;font-family:inherit;color:var(--text);
@@ -295,6 +295,20 @@ body{
 }
 .celebrate-toast.show{opacity:1;transform:translate(-50%,0);}
 .celebrate-toast.big{background:var(--gold);color:var(--navy);box-shadow:0 8px 20px rgba(255,201,60,0.5);font-size:16px;}
+
+.scrollhint{
+  position:fixed;left:50%;bottom:20px;transform:translate(-50%,0);
+  background:var(--navy);color:#fff;font-weight:800;font-size:13px;border:none;
+  padding:10px 18px;border-radius:30px;box-shadow:0 8px 20px rgba(27,42,74,0.35);
+  cursor:pointer;z-index:60;white-space:nowrap;
+  animation:scrollhint-bounce 1.6s ease-in-out infinite;
+  transition:opacity .2s ease;
+}
+.scrollhint.hidden{display:none;}
+@keyframes scrollhint-bounce{
+  0%,100%{transform:translate(-50%,0);}
+  50%{transform:translate(-50%,-6px);}
+}
 .qcard{background:var(--panel);border-radius:24px;padding:26px 20px;text-align:center;
   border:2px solid var(--line); box-shadow:var(--shadow-card);}
 .qprompt-label{font-size:12px;text-transform:uppercase;letter-spacing:1px;color:var(--orange);font-weight:800;margin-bottom:10px;}

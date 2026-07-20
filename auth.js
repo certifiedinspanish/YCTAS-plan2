@@ -17,6 +17,12 @@
 // writes only to its own key within that doc.
 // ---------------------------------------------------------------------
 
+// Formspree endpoint — delivers each "Questions? Contact us" submission
+// straight to info@thespanishfluencycentre.com as a normal email. The
+// Firestore "support_requests" collection is kept as a backup copy
+// alongside it, in case an email ever gets lost or filtered.
+const CONTACT_FORM_ENDPOINT = 'https://formspree.io/f/mykrjaqn';
+
 const firebaseConfig = {
   apiKey: "AIzaSyB2BQl-_R8tcDMLR1eiT_4WNQ02A41LC10",
   authDomain: "yctas-accounts.firebaseapp.com",
@@ -341,16 +347,31 @@ const DAILY_STREAK_KEY = 'yctas_plan2_dailystreak_v1';
       if (!name || !email || !message) { showStatus('Please fill in all three fields.'); return; }
       submitBtn.disabled = true;
       submitBtn.textContent = 'Sending\u2026';
-      try {
-        await db.collection('support_requests').add({
-          name, email, message,
-          createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-        });
+
+      // Send to both: Formspree actually delivers it to the inbox (the
+      // part that matters most), Firestore keeps a backup copy. Treat it
+      // as a success as long as at least the email delivery goes through.
+      const emailPromise = fetch(CONTACT_FORM_ENDPOINT, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({ name, email, message }),
+      });
+      const backupPromise = db.collection('support_requests').add({
+        name, email, message,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+      });
+
+      const [emailResult, backupResult] = await Promise.allSettled([emailPromise, backupPromise]);
+      const emailOk = emailResult.status === 'fulfilled' && emailResult.value.ok;
+      if (backupResult.status === 'rejected') console.warn('YCTAS contact form: backup save to Firestore failed.', backupResult.reason);
+      if (!emailOk) console.warn('YCTAS contact form: Formspree delivery failed.', emailResult);
+
+      if (emailOk) {
         showStatus('Thanks — your message has been sent!', true);
         nameInput.value = ''; emailInput.value = ''; messageInput.value = '';
         submitBtn.textContent = 'Send message';
-        setTimeout(() => overlay.remove(), 1400);
-      } catch (e) {
+        setTimeout(() => overlay.remove(), 4000);
+      } else {
         showStatus('Something went wrong sending that — please try again.');
         submitBtn.disabled = false;
         submitBtn.textContent = 'Send message';

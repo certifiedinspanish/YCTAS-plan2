@@ -48,6 +48,7 @@ function createTester(opts) {
     <p class="stargrid-label">Your progress so far:</p>
     <div class="stargrid" data-el="starGrid"></div>
     <span class="resetlink" data-el="resetLink">Reset all progress</span>
+    <button class="scrollhint hidden" data-el="scrollHint">⬇ More below — your flags &amp; progress</button>
   `;
 
   const el = {};
@@ -583,6 +584,23 @@ function createTester(opts) {
   renderProgress();
   renderDailyStreak();
   newQuestion();
+
+  // Scroll hint — on a wide/short window (like a laptop browser), the star
+  // grid at the bottom can end up out of view with nothing suggesting it's
+  // there. Show a small hint whenever it's scrolled out of sight; hide it
+  // the moment it's visible. Uses IntersectionObserver, the standard,
+  // built-in way browsers already detect scroll visibility.
+  if('IntersectionObserver' in window){
+    const hintObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        el.scrollHint.classList.toggle('hidden', entry.isIntersecting);
+      });
+    }, { threshold: 0.1 });
+    hintObserver.observe(el.starGrid);
+  }
+  el.scrollHint.addEventListener('click', () => {
+    el.starGrid.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  });
 
   // If a login happens while this screen is already open (rare, but
   // possible), reload everything fresh from localStorage — auth.js writes
