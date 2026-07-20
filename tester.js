@@ -84,7 +84,16 @@ function createTester(opts) {
     }catch(e){}
     return { current: 0, lastDate: null };
   }
-  function saveDailyStreak(s){ try{ localStorage.setItem(DAILY_STREAK_KEY, JSON.stringify(s)); }catch(e){} }
+  // If an account is logged in, every local save also gets queued up to sync
+  // to the cloud. If no one's logged in, YCTASAuth.pushProgress is a no-op —
+  // this line is safe to call unconditionally and never breaks the no-login
+  // experience.
+  function cloudSync(){
+    if(window.YCTASAuth && window.YCTASAuth.isLoggedIn()){
+      window.YCTASAuth.pushProgress({ progress, streaks, dailyStreak });
+    }
+  }
+  function saveDailyStreak(s){ try{ localStorage.setItem(DAILY_STREAK_KEY, JSON.stringify(s)); }catch(e){} cloudSync(); }
   function renderDailyStreak(){
     el.dailyStreakCount.textContent = dailyStreak.current;
   }
@@ -118,7 +127,7 @@ function createTester(opts) {
     countries.forEach(c => p[c.key] = { correctDates: [] });
     return p;
   }
-  function saveProgress(p){ try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(p)); }catch(e){} }
+  function saveProgress(p){ try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(p)); }catch(e){} cloudSync(); }
   function isMastered(p, key){
     const rec = p[key];
     if(!rec) return false;
@@ -147,7 +156,7 @@ function createTester(opts) {
     }catch(e){}
     return { pop: { current: 0, best: 0 }, area: { current: 0, best: 0 } };
   }
-  function saveStreaks(s){ try{ localStorage.setItem(STREAK_KEY, JSON.stringify(s)); }catch(e){} }
+  function saveStreaks(s){ try{ localStorage.setItem(STREAK_KEY, JSON.stringify(s)); }catch(e){} cloudSync(); }
 
   let progress = loadProgress();
   let streaks = loadStreaks();
@@ -561,5 +570,19 @@ function createTester(opts) {
   renderDailyStreak();
   newQuestion();
 
-  return { pause: pauseReferenceAudio };
+  // If a login happens while this screen is already open (rare, but
+  // possible), reload everything fresh from localStorage — auth.js writes
+  // the merged result there — and re-render so nothing looks stale.
+  function refreshFromStorage(){
+    progress = loadProgress();
+    streaks = loadStreaks();
+    dailyStreak = loadDailyStreak();
+    renderProgress();
+    renderStreak();
+    renderDailyStreak();
+    newQuestion();
+  }
+  window.addEventListener('yctas:progressMerged', refreshFromStorage);
+
+  return { pause: pauseReferenceAudio, refresh: refreshFromStorage };
 }
