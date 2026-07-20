@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Nunito+Sans:wght@400;600;700;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=21">
+<link rel="stylesheet" href="style.css?v=22">
 </head>
 <body>
 
@@ -55,7 +55,9 @@
        v17: fixed v15/v16 regressions — Spain's shape was being wrongly relocated into the Americas map (z-order fix bug), map SVG now has explicit width/height so it can't be miscropped, country borders are now clearly visible (were nearly invisible), song reference toggle now actually produces sound (currentTime bug was silently blocking playback)
        v18: added the 4th home tile — Spotlight Country: Equatorial Guinea (flag, facts, real-geography map, 2 Did You Know cards, 4 tap-to-hear clips including the Ciudad de la Paz capital update with a Malabo footnote)
        v19: fixed the home tile's flag emoji rendering as "GQ" text on some phones (now uses the real flag image), and the spotlight title now shows the full official name to match what the audio clip actually says
-       v20: reverted title back to the short "Guinea Ecuatorial" per decision; old long-form name audio deleted (unused); new short-form name audio installed and the 🔊 button re-enabled -->
+       v20: reverted title back to the short "Guinea Ecuatorial" per decision; old long-form name audio deleted (unused); new short-form name audio installed and the 🔊 button re-enabled
+       v21: added optional login/accounts (Firebase) so progress can follow a learner across their own devices — fully optional, app works identically with no login; added a "Questions? Contact us" form (never shows the real support email)
+       v22: fixed a bug where Country → Capital and Capital → Country would silently do nothing on some devices — caused by older saved progress on that browser missing an entry for a country; now self-heals automatically -->
   <footer>YCTAS!™ · © 2026 The Spanish Fluency Centre · <a href="#" id="contactLink" class="contact-link">Questions? Contact us</a></footer>
 </section>
 
@@ -85,10 +87,10 @@
 <script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-firestore-compat.js"></script>
-<script src="auth.js?v=21"></script>
-<script src="songplayer.js?v=21"></script>
-<script src="tester.js?v=21"></script>
-<script src="eg.js?v=21"></script>
-<script src="app.js?v=21"></script>
+<script src="auth.js?v=22"></script>
+<script src="songplayer.js?v=22"></script>
+<script src="tester.js?v=22"></script>
+<script src="eg.js?v=22"></script>
+<script src="app.js?v=22"></script>
 </body>
 </html>

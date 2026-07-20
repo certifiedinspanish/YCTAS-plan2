@@ -121,7 +121,17 @@ function createTester(opts) {
   function loadProgress(){
     try{
       const raw = localStorage.getItem(STORAGE_KEY);
-      if(raw) return JSON.parse(raw);
+      if(raw){
+        const parsed = JSON.parse(raw);
+        // Self-heal: older saved progress (from before a country was added,
+        // or any other gap) may be missing an entry for one or more
+        // countries. Backfilling here means the app never crashes on a
+        // browser carrying older saved data — this was the root cause of
+        // Country <-> Capital silently breaking on some devices while
+        // Song Order and Compare kept working fine.
+        countries.forEach(c => { if(!parsed[c.key]) parsed[c.key] = { correctDates: [] }; });
+        return parsed;
+      }
     }catch(e){}
     const p = {};
     countries.forEach(c => p[c.key] = { correctDates: [] });
@@ -188,7 +198,11 @@ function createTester(opts) {
   function chooseTargetCountry(){
     const unmastered = countries.filter(c => !isMastered(progress, c.key));
     const pool = unmastered.length ? unmastered : countries;
-    pool.sort((a,b) => (progress[a.key].correctDates.length) - (progress[b.key].correctDates.length));
+    pool.sort((a,b) => {
+      const na = (progress[a.key] && progress[a.key].correctDates.length) || 0;
+      const nb = (progress[b.key] && progress[b.key].correctDates.length) || 0;
+      return na - nb;
+    });
     const topFew = pool.slice(0, Math.min(6, pool.length));
     return topFew[Math.floor(Math.random()*topFew.length)];
   }
