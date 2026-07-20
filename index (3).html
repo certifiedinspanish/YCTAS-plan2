@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>YCTAS! — Hispanic Countries + 1 Territory</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Nunito+Sans:wght@400;600;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css?v=21">
+</head>
+<body>
+
+<div class="topnav">
+  <span class="brand">YCTAS! · Plan 2</span>
+  <div class="topnav-right">
+    <button class="backbtn hidden" id="backBtn">← Home</button>
+  </div>
+</div>
+
+<!-- HOME -->
+<section id="view-home" class="wrap">
+  <div class="home-header">
+    <div class="eyebrow">Hispanic Countries + 1 Territory</div>
+    <h1>Songs &amp; Practice</h1>
+    <p>Pick a song to sing along, or head to practice to test what you know.</p>
+  </div>
+  <div class="tiles">
+    <div class="tile" data-goto="countries">
+      <div class="icon">🎵</div>
+      <div class="txt"><h2>Countries Song</h2><p>Sing through all 20 countries, in order</p></div>
+    </div>
+    <div class="tile" data-goto="capitals">
+      <div class="icon">🏛️</div>
+      <div class="txt"><h2>Capitals Song</h2><p>Country and capital, sung together</p></div>
+    </div>
+    <div class="tile" data-goto="practice">
+      <div class="icon">🎯</div>
+      <div class="txt"><h2>Practice &amp; Games</h2><p>Country ↔ Capital, Song Order, and Compare</p></div>
+    </div>
+    <div class="tile" data-goto="spotlight">
+      <img class="icon eg-tile-flag" src="eg_flag.png" alt="Flag of Equatorial Guinea">
+      <div class="txt"><span class="tile-eyebrow">Spotlight Country</span><h2>Equatorial Guinea</h2><p>A quick look at a Spanish-speaking country beyond the songs</p></div>
+    </div>
+  </div>
+  <!-- Internal version log (not visible to site visitors — for our own reference only):
+       v9: game visible without scrolling, sticky nav, done-color fix
+       v10: map cropping fix, Spain inset shrunk to mainland-only, footer cleaned up
+       v11: calendar-day bug fixed — mastery tracking now uses the student's local day, not UTC
+       v12: filling progress rings (replaces flat star grid), daily streak flame, celebration toast on correct answers
+       v13: map bottom margin fixed (Chile/Argentina were flush against the canvas edge), map aspect-ratio locked, back button now stays in-app like the Home button
+       v14: Countries song re-tagged with tighter timing (fixes Uruguay/Venezuela/Rep. Dominicana highlighting); Capitals song audio trimmed and re-tagged (fixes the early dead-air delay before Argentina)
+       v15: map now has equal, visible ocean margin on all four sides (previously flush against every edge, not just the bottom)
+       v16: Practice & Games now has a "Need more help?" song reference toggle — play either song in the background, off by default, while doing any game mode
+       v17: fixed v15/v16 regressions — Spain's shape was being wrongly relocated into the Americas map (z-order fix bug), map SVG now has explicit width/height so it can't be miscropped, country borders are now clearly visible (were nearly invisible), song reference toggle now actually produces sound (currentTime bug was silently blocking playback)
+       v18: added the 4th home tile — Spotlight Country: Equatorial Guinea (flag, facts, real-geography map, 2 Did You Know cards, 4 tap-to-hear clips including the Ciudad de la Paz capital update with a Malabo footnote)
+       v19: fixed the home tile's flag emoji rendering as "GQ" text on some phones (now uses the real flag image), and the spotlight title now shows the full official name to match what the audio clip actually says
+       v20: reverted title back to the short "Guinea Ecuatorial" per decision; old long-form name audio deleted (unused); new short-form name audio installed and the 🔊 button re-enabled -->
+  <footer>YCTAS!™ · © 2026 The Spanish Fluency Centre · <a href="#" id="contactLink" class="contact-link">Questions? Contact us</a></footer>
+</section>
+
+<!-- COUNTRIES SONG -->
+<section id="view-countries" class="wrap hidden">
+  <div id="countriesPlayer"></div>
+</section>
+
+<!-- CAPITALS SONG -->
+<section id="view-capitals" class="wrap hidden">
+  <div id="capitalsPlayer"></div>
+</section>
+
+<!-- PRACTICE -->
+<section id="view-practice" class="wrap hidden">
+  <div id="practiceRoot"></div>
+</section>
+
+<!-- SPOTLIGHT COUNTRY: Equatorial Guinea -->
+<section id="view-spotlight" class="wrap hidden">
+  <div id="spotlightRoot"></div>
+</section>
+
+<!-- Firebase — powers the optional login/account sync. If these fail to
+     load (offline, blocked network, etc.), auth.js detects that and the
+     rest of the app keeps working with zero login exactly as before. -->
+<script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-firestore-compat.js"></script>
+<script src="auth.js?v=21"></script>
+<script src="songplayer.js?v=21"></script>
+<script src="tester.js?v=21"></script>
+<script src="eg.js?v=21"></script>
+<script src="app.js?v=21"></script>
+</body>
+</html>
