@@ -7,13 +7,15 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Nunito+Sans:wght@400;600;700;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=20">
+<link rel="stylesheet" href="style.css?v=21">
 </head>
 <body>
 
 <div class="topnav">
   <span class="brand">YCTAS! · Plan 2</span>
-  <button class="backbtn hidden" id="backBtn">← Home</button>
+  <div class="topnav-right">
+    <button class="backbtn hidden" id="backBtn">← Home</button>
+  </div>
 </div>
 
 <!-- HOME -->
@@ -54,7 +56,7 @@
        v18: added the 4th home tile — Spotlight Country: Equatorial Guinea (flag, facts, real-geography map, 2 Did You Know cards, 4 tap-to-hear clips including the Ciudad de la Paz capital update with a Malabo footnote)
        v19: fixed the home tile's flag emoji rendering as "GQ" text on some phones (now uses the real flag image), and the spotlight title now shows the full official name to match what the audio clip actually says
        v20: reverted title back to the short "Guinea Ecuatorial" per decision; old long-form name audio deleted (unused); new short-form name audio installed and the 🔊 button re-enabled -->
-  <footer>YCTAS!™ · © 2026 The Spanish Fluency Centre</footer>
+  <footer>YCTAS!™ · © 2026 The Spanish Fluency Centre · <a href="#" id="contactLink" class="contact-link">Questions? Contact us</a></footer>
 </section>
 
 <!-- COUNTRIES SONG -->
@@ -77,9 +79,16 @@
   <div id="spotlightRoot"></div>
 </section>
 
-<script src="songplayer.js?v=20"></script>
-<script src="tester.js?v=20"></script>
-<script src="eg.js?v=20"></script>
-<script src="app.js?v=20"></script>
+<!-- Firebase — powers the optional login/account sync. If these fail to
+     load (offline, blocked network, etc.), auth.js detects that and the
+     rest of the app keeps working with zero login exactly as before. -->
+<script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-firestore-compat.js"></script>
+<script src="auth.js?v=21"></script>
+<script src="songplayer.js?v=21"></script>
+<script src="tester.js?v=21"></script>
+<script src="eg.js?v=21"></script>
+<script src="app.js?v=21"></script>
 </body>
 </html>
