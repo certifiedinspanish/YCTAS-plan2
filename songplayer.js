@@ -53,6 +53,15 @@ function createSongPlayer(opts) {
   // clickable or count toward any game.
   if(am.context){
     for (const c of Object.values(am.context)) {
+      // Solid "backing" layer first, no dash, thicker stroke acting as a
+      // gap-filler — hides any hairline seam where this shape's real-world
+      // data doesn't perfectly line up with a neighboring song country's.
+      const backing = document.createElementNS(svgNS, 'path');
+      backing.setAttribute('d', c.d);
+      backing.setAttribute('class', 'context-shape-backing');
+      amSvg.appendChild(backing);
+    }
+    for (const c of Object.values(am.context)) {
       const path = document.createElementNS(svgNS, 'path');
       path.setAttribute('d', c.d);
       path.setAttribute('class', 'context-shape');
