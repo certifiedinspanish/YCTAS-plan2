@@ -1,5 +1,5 @@
 function createTester(opts) {
-  const { container, countries, flags, compareData, countriesAudioSrc, capitalsAudioSrc } = opts;
+  const { container, countries, flags, compareData, countriesAudioSrc, capitalsAudioSrc, cuesCountries } = opts;
 
   container.innerHTML = `
     <div class="streakflame" data-el="dailyStreakWrap">
@@ -25,6 +25,7 @@ function createTester(opts) {
       <button class="modebtn active" data-mode="c2cap">Country → Capital</button>
       <button class="modebtn" data-mode="cap2c">Capital → Country</button>
       <button class="modebtn" data-mode="order">Song Order</button>
+      <button class="modebtn" data-mode="sequence">🏅 Sequence Game</button>
       <button class="modebtn" data-mode="pop">Compare: People</button>
       <button class="modebtn" data-mode="area">Compare: Size</button>
     </div>
@@ -48,7 +49,6 @@ function createTester(opts) {
     <p class="stargrid-label">Your progress so far:</p>
     <div class="stargrid" data-el="starGrid"></div>
     <span class="resetlink" data-el="resetLink">Reset all progress</span>
-    <button class="scrollhint hidden" data-el="scrollHint">⬇ More below — your flags &amp; progress</button>
   `;
 
   const el = {};
@@ -85,16 +85,7 @@ function createTester(opts) {
     }catch(e){}
     return { current: 0, lastDate: null };
   }
-  // If an account is logged in, every local save also gets queued up to sync
-  // to the cloud. If no one's logged in, YCTASAuth.pushProgress is a no-op —
-  // this line is safe to call unconditionally and never breaks the no-login
-  // experience.
-  function cloudSync(){
-    if(window.YCTASAuth && window.YCTASAuth.isLoggedIn()){
-      window.YCTASAuth.pushProgress({ progress, streaks, dailyStreak });
-    }
-  }
-  function saveDailyStreak(s){ try{ localStorage.setItem(DAILY_STREAK_KEY, JSON.stringify(s)); }catch(e){} cloudSync(); }
+  function saveDailyStreak(s){ try{ localStorage.setItem(DAILY_STREAK_KEY, JSON.stringify(s)); }catch(e){} }
   function renderDailyStreak(){
     el.dailyStreakCount.textContent = dailyStreak.current;
   }
@@ -119,26 +110,60 @@ function createTester(opts) {
     }, big ? 1800 : 1100);
   }
 
+  // Song Order snippets: reuses the Countries song's own tagged timestamps
+  // (cuesCountries) to jump straight to each country's moment in the real
+  // song and play a couple seconds — no new audio recorded for this.
+  const cueTimeByKey = {};
+  const allCueTimes = [];
+  if(cuesCountries){
+    cuesCountries.forEach(c => {
+      allCueTimes.push(c.time);
+      if(c.type === 'country') cueTimeByKey[c.key] = c.time;
+    });
+    allCueTimes.sort((a, b) => a - b);
+  }
+  const snippetAudio = new Audio('countries_song.mp3');
+  snippetAudio.preload = 'auto';
+  let snippetStopTimer = null;
+  function playSnippet(key){
+    return new Promise(resolve => {
+      const startT = cueTimeByKey[key];
+      if(startT === undefined){ resolve(); return; }
+      // Don't let this short snippet overlap with the looping reference song
+      // if it happens to be playing.
+      if(refPlaying){
+        refAudio.pause();
+        refPlaying = false;
+        el.songToggle.textContent = '▶️ Play';
+        el.songToggle.classList.remove('playing');
+      }
+      const nextT = allCueTimes.find(t => t > startT);
+      const dur = Math.min(nextT ? (nextT - startT) : 2, 2);
+
+      const doPlay = () => {
+        try { snippetAudio.currentTime = startT; } catch(e){}
+        snippetAudio.play().catch(() => {});
+        clearTimeout(snippetStopTimer);
+        snippetStopTimer = setTimeout(() => { snippetAudio.pause(); resolve(); }, dur * 1000);
+      };
+      if(snippetAudio.readyState >= 1){
+        doPlay();
+      } else {
+        snippetAudio.addEventListener('loadedmetadata', doPlay, { once: true });
+      }
+    });
+  }
+
   function loadProgress(){
     try{
       const raw = localStorage.getItem(STORAGE_KEY);
-      if(raw){
-        const parsed = JSON.parse(raw);
-        // Self-heal: older saved progress (from before a country was added,
-        // or any other gap) may be missing an entry for one or more
-        // countries. Backfilling here means the app never crashes on a
-        // browser carrying older saved data — this was the root cause of
-        // Country <-> Capital silently breaking on some devices while
-        // Song Order and Compare kept working fine.
-        countries.forEach(c => { if(!parsed[c.key]) parsed[c.key] = { correctDates: [] }; });
-        return parsed;
-      }
+      if(raw) return JSON.parse(raw);
     }catch(e){}
     const p = {};
     countries.forEach(c => p[c.key] = { correctDates: [] });
     return p;
   }
-  function saveProgress(p){ try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(p)); }catch(e){} cloudSync(); }
+  function saveProgress(p){ try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(p)); }catch(e){} }
   function isMastered(p, key){
     const rec = p[key];
     if(!rec) return false;
@@ -167,7 +192,7 @@ function createTester(opts) {
     }catch(e){}
     return { pop: { current: 0, best: 0 }, area: { current: 0, best: 0 } };
   }
-  function saveStreaks(s){ try{ localStorage.setItem(STREAK_KEY, JSON.stringify(s)); }catch(e){} cloudSync(); }
+  function saveStreaks(s){ try{ localStorage.setItem(STREAK_KEY, JSON.stringify(s)); }catch(e){} }
 
   let progress = loadProgress();
   let streaks = loadStreaks();
@@ -193,17 +218,24 @@ function createTester(opts) {
     return out;
   }
 
+  // Same fair-shuffle used by Plan 1's Sequence Game, for a faithful port.
+  function shuffle(arr){
+    const a = [...arr];
+    for(let i = a.length - 1; i > 0; i--){
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+  function wait(ms){ return new Promise(r => setTimeout(r, ms)); }
+
   const byKey = {};
   countries.forEach(c => byKey[c.key] = c);
 
   function chooseTargetCountry(){
     const unmastered = countries.filter(c => !isMastered(progress, c.key));
     const pool = unmastered.length ? unmastered : countries;
-    pool.sort((a,b) => {
-      const na = (progress[a.key] && progress[a.key].correctDates.length) || 0;
-      const nb = (progress[b.key] && progress[b.key].correctDates.length) || 0;
-      return na - nb;
-    });
+    pool.sort((a,b) => (progress[a.key].correctDates.length) - (progress[b.key].correctDates.length));
     const topFew = pool.slice(0, Math.min(6, pool.length));
     return topFew[Math.floor(Math.random()*topFew.length)];
   }
@@ -285,6 +317,9 @@ function createTester(opts) {
   }
 
   function newQuestion(){
+    if(mode === 'sequence'){ renderSequenceGame(); return; }
+    clearTimeout(snippetStopTimer);
+    snippetAudio.pause();
     if(browsing && (mode === 'pop' || mode === 'area')){
       renderBrowseList();
       return;
@@ -389,10 +424,18 @@ function createTester(opts) {
       const seqRow = document.createElement('div');
       seqRow.style.display = 'flex'; seqRow.style.justifyContent='center'; seqRow.style.gap='8px'; seqRow.style.marginBottom='16px';
       shown.forEach(c => {
+        const flagBtn = document.createElement('button');
+        flagBtn.className = 'seq-flag-btn';
+        flagBtn.setAttribute('aria-label', 'Play ' + c.name + ' in the song');
         const img = document.createElement('img');
         img.src = flagSrc(c.key);
-        img.style.width='54px'; img.style.height='38px'; img.style.objectFit='cover'; img.style.borderRadius='6px';
-        seqRow.appendChild(img);
+        flagBtn.appendChild(img);
+        const badge = document.createElement('span');
+        badge.className = 'seq-flag-hear';
+        badge.textContent = '🔊';
+        flagBtn.appendChild(badge);
+        flagBtn.addEventListener('click', () => playSnippet(c.key));
+        seqRow.appendChild(flagBtn);
       });
       el.qcard.appendChild(seqRow);
 
@@ -402,9 +445,20 @@ function createTester(opts) {
         const btn = document.createElement('button');
         btn.className = 'choice';
         btn.dataset.key = opt.key;
+        const flagWrap = document.createElement('span');
+        flagWrap.className = 'choice-flag-wrap';
         const img = document.createElement('img');
         img.src = flagSrc(opt.key);
-        btn.appendChild(img);
+        flagWrap.appendChild(img);
+        const hearBadge = document.createElement('span');
+        hearBadge.className = 'choice-hear';
+        hearBadge.textContent = '🔊';
+        hearBadge.addEventListener('click', (e) => {
+          e.stopPropagation();
+          playSnippet(opt.key);
+        });
+        flagWrap.appendChild(hearBadge);
+        btn.appendChild(flagWrap);
         const span = document.createElement('span');
         span.textContent = opt.name;
         btn.appendChild(span);
@@ -542,23 +596,225 @@ function createTester(opts) {
       el.songToggle.textContent = '▶️ Play';
       el.songToggle.classList.remove('playing');
     }
+    clearTimeout(snippetStopTimer);
+    snippetAudio.pause();
+    seqRunId += 1;
+  }
+
+  // Sequence Game — same mechanic as Plan 1's verb Sequence Game, ported to
+  // countries + the real song audio (via playSnippet) instead of recorded
+  // verb clips. Practice-only: retirement here never touches mastery stars.
+  const SEQ_LENGTH = 3;
+  const SEQ_MASTERY_THRESHOLD = 5;
+  const SEQ_STORAGE_KEY = 'yctas_plan2_seqgame_v1';
+
+  function loadSeqProgress(){
+    const fresh = {};
+    countries.forEach(c => fresh[c.key] = { gameStreak: 0, gameRetired: false });
+    try{
+      const raw = localStorage.getItem(SEQ_STORAGE_KEY);
+      if(raw){
+        const saved = JSON.parse(raw);
+        countries.forEach(c => { if(saved[c.key]) fresh[c.key] = saved[c.key]; });
+      }
+    }catch(e){}
+    return fresh;
+  }
+  function saveSeqProgress(){ try{ localStorage.setItem(SEQ_STORAGE_KEY, JSON.stringify(seqProgress)); }catch(e){} }
+
+  let seqProgress = loadSeqProgress();
+  let seqCurrentSequence = [];
+  let seqDisplayOrder = [];
+  let seqPhase = 'idle';
+  let seqPlayerStep = 0;
+  let seqMissedKey = null;
+  let seqCorrectFlashKey = null;
+  let seqDifficulty = 'easy';
+  let seqRunId = 0;
+  let seqTapLocked = false;
+
+  function seqActiveCountries(){ return countries.filter(c => !seqProgress[c.key].gameRetired); }
+
+  function enterSequenceView(){
+    seqRunId += 1; // invalidates any stale async playback from a prior round/mode
+    seqPhase = 'idle';
+    seqCurrentSequence = [];
+    seqDisplayOrder = [];
+    seqMissedKey = null;
+    seqCorrectFlashKey = null;
+    seqTapLocked = false;
+    renderSequenceGame();
+  }
+
+  function startSequenceGame(){
+    seqPhase = 'watching';
+    seqNextRound();
+  }
+
+  function seqNextRound(){
+    seqRunId += 1;
+    const myRun = seqRunId;
+    const active = seqActiveCountries();
+    if(active.length === 0){ seqPhase = 'won'; renderSequenceGame(); return; }
+    const count = Math.min(SEQ_LENGTH, active.length);
+    seqCurrentSequence = shuffle(active).slice(0, count);
+    seqDisplayOrder = shuffle(seqCurrentSequence);
+    if(seqCurrentSequence.length > 1){
+      let tries = 0;
+      const matches = arr => arr.every((c, i) => c.key === seqCurrentSequence[i].key);
+      while(tries < 30 && matches(seqDisplayOrder)){ seqDisplayOrder = shuffle(seqCurrentSequence); tries++; }
+    }
+    seqPlayerStep = 0;
+    seqMissedKey = null;
+    seqPhase = 'watching';
+    renderSequenceGame();
+    seqPlaySequence(myRun);
+  }
+
+  function seqReshuffleDisplayOrder(){
+    let attempt = shuffle(seqCurrentSequence);
+    const matchesPlayback = arr => seqCurrentSequence.length > 1 && arr.every((c, i) => c.key === seqCurrentSequence[i].key);
+    if(matchesPlayback(attempt)){
+      // Guaranteed fix, not just a random retry: swapping the first two
+      // positions makes it mathematically impossible to still match playback order.
+      [attempt[0], attempt[1]] = [attempt[1], attempt[0]];
+    }
+    seqDisplayOrder = attempt;
+  }
+
+  async function seqPlaySequence(myRun){
+    await wait(300);
+    if(myRun !== seqRunId) return; // a newer round/mode-switch has since started
+    for(const c of seqCurrentSequence){
+      if(seqDifficulty === 'easy') renderSequenceGame(c.key);
+      await playSnippet(c.key);
+      if(myRun !== seqRunId) return;
+      if(seqDifficulty === 'easy') renderSequenceGame(null);
+      await wait(200);
+      if(myRun !== seqRunId) return;
+    }
+    // Re-scramble tile positions before the answer phase — otherwise
+    // remembering "which spot lit up" is enough, and the test is meaningless.
+    seqReshuffleDisplayOrder();
+    seqPhase = 'playerTurn';
+    renderSequenceGame();
+  }
+
+  function handleSeqTap(key){
+    if(seqPhase !== 'playerTurn' || seqTapLocked) return;
+    seqTapLocked = true;
+    renderSequenceGame(key);
+    const feedbackDone = playSnippet(key);
+    setTimeout(() => renderSequenceGame(null), 250);
+
+    const expected = seqCurrentSequence[seqPlayerStep];
+    if(key === expected.key){
+      seqProgress[expected.key].gameStreak += 1;
+      seqCorrectFlashKey = key;
+      setTimeout(() => { seqCorrectFlashKey = null; renderSequenceGame(); }, 380);
+      if(seqProgress[expected.key].gameStreak >= SEQ_MASTERY_THRESHOLD) seqProgress[expected.key].gameRetired = true;
+      seqPlayerStep += 1;
+      renderSequenceGame();
+      saveSeqProgress();
+      seqTapLocked = false;
+      if(seqPlayerStep === seqCurrentSequence.length){
+        feedbackDone.then(() => wait(350)).then(() => seqNextRound());
+      }
+    } else {
+      seqProgress[expected.key].gameStreak = 0;
+      seqMissedKey = expected.key;
+      seqPhase = 'watching';
+      renderSequenceGame();
+      saveSeqProgress();
+      seqTapLocked = false;
+      feedbackDone.then(() => wait(700)).then(() => seqNextRound());
+    }
+  }
+
+  function renderSequenceGame(litKey){
+    const active = seqActiveCountries();
+    const retiredCount = countries.length - active.length;
+    const statusText = {
+      idle: 'Tap Start to play',
+      watching: seqMissedKey ? "Not quite — here's the one that was next:" : (seqDifficulty === 'challenge' ? '👂 Listen carefully — no visual clues this time' : '👀 Watch and listen...'),
+      playerTurn: '🎯 Your turn — tap them back in order',
+      won: '🎉 All practiced countries retired for now!',
+    }[seqPhase];
+
+    let boardHtml = '';
+    if(seqPhase !== 'idle' && seqPhase !== 'won' && seqDisplayOrder.length > 0){
+      boardHtml = `
+        <div class="seq-board" style="grid-template-columns:repeat(${seqDisplayOrder.length}, 1fr);">
+          ${seqDisplayOrder.map(c => `
+            <div class="seq-tile" data-key="${c.key}" style="border-color:${
+              seqCorrectFlashKey === c.key ? 'var(--green)' :
+              (seqMissedKey === c.key ? 'var(--coral)' :
+              (litKey === c.key ? 'var(--gold)' : 'var(--line)'))
+            };cursor:${seqPhase === 'playerTurn' ? 'pointer' : 'default'};opacity:${seqPhase !== 'playerTurn' ? '0.6' : '1'};">
+              <img src="${flagSrc(c.key)}" alt="${c.name}">
+            </div>
+          `).join('')}
+        </div>
+      `;
+    }
+
+    el.qcard.innerHTML = `
+      <p class="qprompt-label">🏅 Sequence Game</p>
+      <p class="seq-subtitle">Listen to 3 countries in a row, then tap them back in the same order — practice retires each one for a while</p>
+      <p class="seq-practiced">Practiced: ${retiredCount}/${countries.length}</p>
+      ${(seqPhase === 'idle' || seqPhase === 'won') ? `
+        <div class="seq-diff-row">
+          <button class="modebtn ${seqDifficulty === 'easy' ? 'active' : ''}" data-el2="seqEasyBtn">Easy</button>
+          <button class="modebtn ${seqDifficulty === 'challenge' ? 'active' : ''}" data-el2="seqChallengeBtn">Challenge</button>
+        </div>
+      ` : ''}
+      <p class="seq-status">${statusText}</p>
+      ${seqPhase === 'idle' ? `<button class="seq-action-btn" data-el2="seqStartBtn">▶️ Start</button>` : ''}
+      ${boardHtml}
+      ${seqPhase === 'won' ? `<button class="seq-action-btn" data-el2="seqAgainBtn">🔄 Play Again</button>` : ''}
+    `;
+
+    const startBtn = el.qcard.querySelector('[data-el2="seqStartBtn"]');
+    if(startBtn) startBtn.addEventListener('click', startSequenceGame);
+    const againBtn = el.qcard.querySelector('[data-el2="seqAgainBtn"]');
+    if(againBtn) againBtn.addEventListener('click', () => {
+      countries.forEach(c => seqProgress[c.key].gameRetired = false);
+      saveSeqProgress();
+      seqPhase = 'idle';
+      renderSequenceGame();
+    });
+    const easyBtn = el.qcard.querySelector('[data-el2="seqEasyBtn"]');
+    if(easyBtn) easyBtn.addEventListener('click', () => { seqDifficulty = 'easy'; renderSequenceGame(); });
+    const challengeBtn = el.qcard.querySelector('[data-el2="seqChallengeBtn"]');
+    if(challengeBtn) challengeBtn.addEventListener('click', () => { seqDifficulty = 'challenge'; renderSequenceGame(); });
+    el.qcard.querySelectorAll('.seq-tile').forEach(tile => {
+      tile.addEventListener('click', () => handleSeqTap(tile.dataset.key));
+    });
   }
 
   container.querySelectorAll('.modebtn').forEach(btn => {
     btn.addEventListener('click', () => {
-      container.querySelectorAll('.modebtn').forEach(b => b.classList.remove('active'));
+      if(btn.dataset.mode === undefined) return; // dynamic Easy/Challenge buttons share this class but aren't top-nav modes
+      container.querySelectorAll('.modebtn[data-mode]').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
+      const leavingSequence = (mode === 'sequence' && btn.dataset.mode !== 'sequence');
       mode = btn.dataset.mode;
+      if(leavingSequence){
+        seqRunId += 1; // abandon any in-flight async playback from the game
+        clearTimeout(snippetStopTimer);
+        snippetAudio.pause();
+      }
       const isCompare = (mode === 'pop' || mode === 'area');
-      el.masteryBar.style.display = isCompare ? 'none' : 'flex';
-      el.starGrid.style.display = isCompare ? 'none' : 'grid';
+      const isSequence = (mode === 'sequence');
+      el.masteryBar.style.display = (isCompare || isSequence) ? 'none' : 'flex';
+      el.starGrid.style.display = (isCompare || isSequence) ? 'none' : 'grid';
       el.streakBar.style.display = isCompare ? 'flex' : 'none';
       el.streakHint.classList.toggle('hidden', !isCompare);
       el.browseBtn.classList.toggle('hidden', !isCompare);
       browsing = false;
       el.browseBtn.textContent = '📖 See the rankings first';
       if(isCompare) renderStreak();
-      newQuestion();
+      if(isSequence){ enterSequenceView(); } else { newQuestion(); }
     });
   });
 
@@ -585,36 +841,13 @@ function createTester(opts) {
   renderDailyStreak();
   newQuestion();
 
-  // Scroll hint — on a wide/short window (like a laptop browser), the star
-  // grid at the bottom can end up out of view with nothing suggesting it's
-  // there. Show a small hint whenever it's scrolled out of sight; hide it
-  // the moment it's visible. Uses IntersectionObserver, the standard,
-  // built-in way browsers already detect scroll visibility.
-  if('IntersectionObserver' in window){
-    const hintObserver = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        el.scrollHint.classList.toggle('hidden', entry.isIntersecting);
-      });
-    }, { threshold: 0.1 });
-    hintObserver.observe(el.starGrid);
-  }
-  el.scrollHint.addEventListener('click', () => {
-    el.starGrid.scrollIntoView({ behavior: 'smooth', block: 'center' });
-  });
-
-  // If a login happens while this screen is already open (rare, but
-  // possible), reload everything fresh from localStorage — auth.js writes
-  // the merged result there — and re-render so nothing looks stale.
-  function refreshFromStorage(){
-    progress = loadProgress();
-    streaks = loadStreaks();
-    dailyStreak = loadDailyStreak();
-    renderProgress();
-    renderStreak();
-    renderDailyStreak();
-    newQuestion();
-  }
-  window.addEventListener('yctas:progressMerged', refreshFromStorage);
-
-  return { pause: pauseReferenceAudio, refresh: refreshFromStorage };
+  return {
+    pause: pauseReferenceAudio,
+    quickPlay(){
+      const modes = ['c2cap', 'cap2c', 'order', 'sequence', 'pop', 'area'];
+      const pick = modes[Math.floor(Math.random() * modes.length)];
+      const btn = container.querySelector('.modebtn[data-mode="' + pick + '"]');
+      if(btn) btn.click();
+    },
+  };
 }

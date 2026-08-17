@@ -10,12 +10,12 @@ async function main(){
   // http/https (e.g. GitHub Pages), not when double-clicking index.html
   // directly from disk, since browsers block fetch() on file:// URLs.
   const [countries, cuesCountries, cuesCapitals, mapData, compareData, egData] = await Promise.all([
-    loadJSON('countries.json?v=24'),
-    loadJSON('cues_countries.json?v=24'),
-    loadJSON('cues_capitals.json?v=24'),
-    loadJSON('map.json?v=24'),
-    loadJSON('compare.json?v=24'),
-    loadJSON('eg_data.json?v=24'),
+    loadJSON('countries.json?v=25'),
+    loadJSON('cues_countries.json?v=25'),
+    loadJSON('cues_capitals.json?v=25'),
+    loadJSON('map.json?v=25'),
+    loadJSON('compare.json?v=25'),
+    loadJSON('eg_data.json?v=25'),
   ]);
 
   const byKey = {};
@@ -41,11 +41,30 @@ async function main(){
   };
   const backBtn = document.getElementById('backBtn');
 
+  // Reads the same daily-streak data Practice already tracks, so it's
+  // visible the moment the app opens — no need to dig into Practice first.
+  function renderHomeStreak(){
+    let streak = null;
+    try{
+      const raw = localStorage.getItem('yctas_plan2_dailystreak_v1');
+      if(raw) streak = JSON.parse(raw);
+    }catch(e){}
+    const wrap = document.getElementById('homeStreak');
+    const countEl = document.getElementById('homeStreakCount');
+    if(streak && streak.current > 0){
+      countEl.textContent = streak.current;
+      wrap.classList.remove('hidden');
+    } else {
+      wrap.classList.add('hidden');
+    }
+  }
+
   function showView(name){
     Object.entries(views).forEach(([key, node]) => {
       node.classList.toggle('hidden', key !== name);
     });
     backBtn.classList.toggle('hidden', name === 'home');
+    if(name === 'home') renderHomeStreak();
 
     // Pause whichever song player isn't currently visible, so audio
     // doesn't keep playing silently in the background after navigating away.
@@ -78,6 +97,7 @@ async function main(){
         countries, flags, compareData,
         countriesAudioSrc: 'countries_song.mp3',
         capitalsAudioSrc: 'capitals_song.mp3',
+        cuesCountries,
       });
       practiceBuilt = true;
     }
@@ -94,6 +114,11 @@ async function main(){
 
   document.querySelectorAll('[data-goto]').forEach(tile => {
     tile.addEventListener('click', () => goToView(tile.dataset.goto));
+  });
+  // One tap, straight into a random game — no mode-picking required.
+  document.getElementById('quickPlayBtn').addEventListener('click', () => {
+    goToView('practice');
+    if(practiceInstance) practiceInstance.quickPlay();
   });
   // Both the Home button and the phone's own back arrow now do the same
   // thing: step back to Home inside the app, instead of the back arrow

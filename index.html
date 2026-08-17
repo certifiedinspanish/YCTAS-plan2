@@ -4,18 +4,24 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>YCTAS! — Hispanic Countries + 1 Territory</title>
+<link rel="manifest" href="manifest.json?v=25">
+<meta name="theme-color" content="#FF8A3D">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="YCTAS!">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" href="icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Nunito+Sans:wght@400;600;700;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=24">
+<link rel="stylesheet" href="style.css?v=25">
 </head>
 <body>
 
 <div class="topnav">
   <span class="brand">YCTAS! · Plan 2</span>
-  <div class="topnav-right">
-    <button class="backbtn hidden" id="backBtn">← Home</button>
-  </div>
+  <button class="backbtn hidden" id="backBtn">← Home</button>
 </div>
 
 <!-- HOME -->
@@ -25,6 +31,10 @@
     <h1>Songs &amp; Practice</h1>
     <p>Pick a song to sing along, or head to practice to test what you know.</p>
   </div>
+  <div class="home-streak hidden" id="homeStreak">
+    <span class="flame-icon">🔥</span> <span id="homeStreakCount">0</span> day streak
+  </div>
+  <button class="quickplay-btn" id="quickPlayBtn">⚡ Quick Play</button>
   <div class="tiles">
     <div class="tile" data-goto="countries">
       <div class="icon">🎵</div>
@@ -56,11 +66,12 @@
        v18: added the 4th home tile — Spotlight Country: Equatorial Guinea (flag, facts, real-geography map, 2 Did You Know cards, 4 tap-to-hear clips including the Ciudad de la Paz capital update with a Malabo footnote)
        v19: fixed the home tile's flag emoji rendering as "GQ" text on some phones (now uses the real flag image), and the spotlight title now shows the full official name to match what the audio clip actually says
        v20: reverted title back to the short "Guinea Ecuatorial" per decision; old long-form name audio deleted (unused); new short-form name audio installed and the 🔊 button re-enabled
-       v21: added optional login/accounts (Firebase) so progress can follow a learner across their own devices — fully optional, app works identically with no login; added a "Questions? Contact us" form (never shows the real support email)
-       v22: fixed a bug where Country → Capital and Capital → Country would silently do nothing on some devices — caused by older saved progress on that browser missing an entry for a country; now self-heals automatically
-       v23: added a bouncing "more below" hint that appears whenever the flags/progress section is scrolled out of view (common on laptop browser windows, which show less vertical space than a phone) — taps to jump straight down to it
-       v24: Contact form now actually emails info@thespanishfluencycentre.com (via Formspree) instead of only silently saving to the database with no notification; the "message sent" confirmation now stays on screen long enough to actually read (was 1.4s, now 4s) -->
-  <footer>YCTAS!™ · © 2026 The Spanish Fluency Centre · <a href="#" id="contactLink" class="contact-link">Questions? Contact us</a></footer>
+       v21: Song Order flags are now tap-to-hear — plays a short real clip from the actual Countries song at that country's own timestamp (reuses cues_countries.json, no new audio recorded), for both the shown sequence and the answer choices
+       v22: Song Order snippet playback now auto-pauses the reference song toggle if it was playing, so the two can never overlap
+       v23: new Sequence Game mode — same mechanic as Plan 1's verb Sequence Game (listen to 3 in a row, tiles shuffle, tap back in order), ported to countries using the real song audio via cues_countries.json; Easy/Challenge difficulty; practice-only retirement after 5 correct, separate from mastery
+       v24: real fix for the persistent Argentina/Chile map cropping — the map SVG's sizing relied on a fragile absolute-position + auto-width/height CSS pattern known to be inconsistent on Android browsers; replaced with standard flexbox centering, which reliably preserves aspect ratio and full visibility across devices
+       v25: engagement pass — Add to Home Screen support (manifest + icons, opens like a real app), a home-screen "⚡ Quick Play" button that jumps straight into a random game mode with zero navigation, and the daily streak flame now shows right on the Home screen -->
+  <footer>YCTAS!™ · © 2026 The Spanish Fluency Centre</footer>
 </section>
 
 <!-- COUNTRIES SONG -->
@@ -83,16 +94,9 @@
   <div id="spotlightRoot"></div>
 </section>
 
-<!-- Firebase — powers the optional login/account sync. If these fail to
-     load (offline, blocked network, etc.), auth.js detects that and the
-     rest of the app keeps working with zero login exactly as before. -->
-<script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-firestore-compat.js"></script>
-<script src="auth.js?v=24"></script>
-<script src="songplayer.js?v=24"></script>
-<script src="tester.js?v=24"></script>
-<script src="eg.js?v=24"></script>
-<script src="app.js?v=24"></script>
+<script src="songplayer.js?v=25"></script>
+<script src="tester.js?v=25"></script>
+<script src="eg.js?v=25"></script>
+<script src="app.js?v=25"></script>
 </body>
 </html>
