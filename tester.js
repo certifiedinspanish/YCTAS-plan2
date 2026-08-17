@@ -137,10 +137,21 @@ function createTester(opts) {
         el.songToggle.classList.remove('playing');
       }
       snippetAudio.onended = null;
+      snippetAudio.onerror = null;
       snippetAudio.pause();
       snippetAudio.src = src;
       snippetAudio.onended = () => resolve();
-      snippetAudio.play().catch(() => resolve());
+      // TEMPORARY diagnostic (v29) — surfaces the exact failure on-screen
+      // since remote debugging isn't available. Safe to remove once the
+      // real cause is found.
+      snippetAudio.onerror = () => {
+        alert('Snippet audio error\nsrc: ' + src + '\ncode: ' + (snippetAudio.error ? snippetAudio.error.code : '?'));
+        resolve();
+      };
+      snippetAudio.play().catch(err => {
+        alert('Snippet play() rejected\nsrc: ' + src + '\n' + err.name + ': ' + err.message);
+        resolve();
+      });
     });
   }
 

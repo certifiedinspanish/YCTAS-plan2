@@ -10,12 +10,12 @@ async function main(){
   // http/https (e.g. GitHub Pages), not when double-clicking index.html
   // directly from disk, since browsers block fetch() on file:// URLs.
   const [countries, cuesCountries, cuesCapitals, mapData, compareData, egData] = await Promise.all([
-    loadJSON('countries.json?v=28'),
-    loadJSON('cues_countries.json?v=28'),
-    loadJSON('cues_capitals.json?v=28'),
-    loadJSON('map.json?v=28'),
-    loadJSON('compare.json?v=28'),
-    loadJSON('eg_data.json?v=28'),
+    loadJSON('countries.json?v=29'),
+    loadJSON('cues_countries.json?v=29'),
+    loadJSON('cues_capitals.json?v=29'),
+    loadJSON('map.json?v=29'),
+    loadJSON('compare.json?v=29'),
+    loadJSON('eg_data.json?v=29'),
   ]);
 
   const byKey = {};

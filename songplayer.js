@@ -51,6 +51,18 @@ function createSongPlayer(opts) {
   // keys (am.context / am.contextLabels / am.waterLabels) that the quiz and
   // highlight logic never reads, so these can never accidentally become
   // clickable or count toward any game.
+  if(am.contextPatches){
+    // Precisely-computed fills for the two real gaps between Brazil's real
+    // border data and the existing hand-placed song countries (found via
+    // proper geometry analysis, not guesswork). Solid, undashed — these
+    // should be invisible as their own shape, just quietly closing the gap.
+    for (const c of Object.values(am.contextPatches)) {
+      const patch = document.createElementNS(svgNS, 'path');
+      patch.setAttribute('d', c.d);
+      patch.setAttribute('class', 'context-patch');
+      amSvg.appendChild(patch);
+    }
+  }
   if(am.context){
     for (const c of Object.values(am.context)) {
       // Solid "backing" layer first, no dash, thicker stroke acting as a
