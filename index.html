@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>YCTAS! — Hispanic Countries + 1 Territory</title>
-<link rel="manifest" href="manifest.json?v=25">
+<link rel="manifest" href="manifest.json?v=27">
 <meta name="theme-color" content="#FF8A3D">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -15,7 +15,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Nunito+Sans:wght@400;600;700;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=25">
+<link rel="stylesheet" href="style.css?v=27">
 </head>
 <body>
 
@@ -70,7 +70,9 @@
        v22: Song Order snippet playback now auto-pauses the reference song toggle if it was playing, so the two can never overlap
        v23: new Sequence Game mode — same mechanic as Plan 1's verb Sequence Game (listen to 3 in a row, tiles shuffle, tap back in order), ported to countries using the real song audio via cues_countries.json; Easy/Challenge difficulty; practice-only retirement after 5 correct, separate from mastery
        v24: real fix for the persistent Argentina/Chile map cropping — the map SVG's sizing relied on a fragile absolute-position + auto-width/height CSS pattern known to be inconsistent on Android browsers; replaced with standard flexbox centering, which reliably preserves aspect ratio and full visibility across devices
-       v25: engagement pass — Add to Home Screen support (manifest + icons, opens like a real app), a home-screen "⚡ Quick Play" button that jumps straight into a random game mode with zero navigation, and the daily streak flame now shows right on the Home screen -->
+       v25: engagement pass — Add to Home Screen support (manifest + icons, opens like a real app), a home-screen "⚡ Quick Play" button that jumps straight into a random game mode with zero navigation, and the daily streak flame now shows right on the Home screen
+       v26: real fix for corrupted/truncated snippet audio (root cause: browser MP3 seeking isn't sample-accurate, so it was landing in the previous country's audio tail) — now uses 20 pre-sliced, sample-accurate clip files instead of runtime seeking; Song Order correct answers now count toward mastery, matching the progress bar that was already visible there; added clear on-screen instructions distinguishing "tap icon to preview" from "tap flag to answer"
+       v27: map geographic context layer — Brazil, Belize, Jamaica, Haiti, Guyana, Suriname, French Guiana, and The Bahamas now show as dashed, muted-gray borders (Brazil + United States labeled, others just bordered for orientation), plus Pacific/Atlantic/Caribbean labels; built from real geographic data (world-atlas), fitted to align with the existing map using known reference points; completely separate data/rendering path from the 20 interactive song countries, so it can never become clickable or affect any game; also shrank the audio player card and map so both fit on one phone screen together without scrolling -->
   <footer>YCTAS!™ · © 2026 The Spanish Fluency Centre</footer>
 </section>
 
@@ -94,9 +96,9 @@
   <div id="spotlightRoot"></div>
 </section>
 
-<script src="songplayer.js?v=25"></script>
-<script src="tester.js?v=25"></script>
-<script src="eg.js?v=25"></script>
-<script src="app.js?v=25"></script>
+<script src="songplayer.js?v=27"></script>
+<script src="tester.js?v=27"></script>
+<script src="eg.js?v=27"></script>
+<script src="app.js?v=27"></script>
 </body>
 </html>

@@ -45,6 +45,52 @@ function createSongPlayer(opts) {
   amSvg.setAttribute('viewBox', '0 0 ' + am.width + ' ' + am.height);
   amSvg.setAttribute('width', am.width);
   amSvg.setAttribute('height', am.height);
+
+  // Context layer: neighboring non-Hispanic countries + water labels, purely
+  // for geographic orientation. Deliberately built from separate map.json
+  // keys (am.context / am.contextLabels / am.waterLabels) that the quiz and
+  // highlight logic never reads, so these can never accidentally become
+  // clickable or count toward any game.
+  if(am.context){
+    for (const c of Object.values(am.context)) {
+      const path = document.createElementNS(svgNS, 'path');
+      path.setAttribute('d', c.d);
+      path.setAttribute('class', 'context-shape');
+      amSvg.appendChild(path);
+    }
+  }
+  function addLabel(x, y, text, size, weight, anchor){
+    const t = document.createElementNS(svgNS, 'text');
+    t.setAttribute('x', x); t.setAttribute('y', y);
+    t.setAttribute('class', 'context-label');
+    t.setAttribute('font-size', size); t.setAttribute('font-weight', weight);
+    t.setAttribute('text-anchor', anchor);
+    t.textContent = text;
+    amSvg.appendChild(t);
+  }
+  (am.contextLabels || []).forEach(l => addLabel(l.x, l.y, l.text, l.size, l.weight, l.anchor));
+  (am.contextLeaderLabels || []).forEach(l => {
+    const line = document.createElementNS(svgNS, 'line');
+    line.setAttribute('x1', l.cx); line.setAttribute('y1', l.cy);
+    line.setAttribute('x2', l.lx); line.setAttribute('y2', l.ly);
+    line.setAttribute('class', 'context-leader');
+    amSvg.appendChild(line);
+    const dot = document.createElementNS(svgNS, 'circle');
+    dot.setAttribute('cx', l.cx); dot.setAttribute('cy', l.cy); dot.setAttribute('r', 1.6);
+    dot.setAttribute('class', 'context-leader-dot');
+    amSvg.appendChild(dot);
+    addLabel(l.lx, l.ly - 3, l.text, 8, 600, 'middle');
+  });
+  (am.waterLabels || []).forEach(l => {
+    const t = document.createElementNS(svgNS, 'text');
+    t.setAttribute('x', l.x); t.setAttribute('y', l.y);
+    t.setAttribute('class', 'water-label');
+    t.setAttribute('text-anchor', 'middle');
+    if(l.rotate) t.setAttribute('transform', 'rotate(-90 ' + l.x + ' ' + l.y + ')');
+    t.textContent = l.text;
+    amSvg.appendChild(t);
+  });
+
   for (const [key, c] of Object.entries(am.countries)) {
     const path = document.createElementNS(svgNS, 'path');
     path.setAttribute('d', c.d);

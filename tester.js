@@ -46,7 +46,7 @@ function createTester(opts) {
       <h2>🌟 All 20 Stars Earned! 🌟</h2>
       <p>You know every country and capital by heart!</p>
     </div>
-    <p class="stargrid-label">Your progress so far:</p>
+    <p class="stargrid-label" data-el="stargridLabel">Your progress so far:</p>
     <div class="stargrid" data-el="starGrid"></div>
     <span class="resetlink" data-el="resetLink">Reset all progress</span>
   `;
@@ -110,25 +110,24 @@ function createTester(opts) {
     }, big ? 1800 : 1100);
   }
 
-  // Song Order snippets: reuses the Countries song's own tagged timestamps
-  // (cuesCountries) to jump straight to each country's moment in the real
-  // song and play a couple seconds — no new audio recorded for this.
-  const cueTimeByKey = {};
-  const allCueTimes = [];
+  // Song Order / Sequence Game snippets: each country has its own tiny,
+  // pre-cut audio file (clip_<key>.mp3), sliced once from the real Countries
+  // song at its exact tagged timestamp. Earlier this seeked into the single
+  // long song file at runtime instead — but MP3 seeking in the browser isn't
+  // sample-accurate, so it would often land slightly early, in the tail end
+  // of the *previous* country's audio. Playing a pre-cut file from its own
+  // start avoids runtime seeking (and that imprecision) entirely.
+  const clipSrcByKey = {};
   if(cuesCountries){
     cuesCountries.forEach(c => {
-      allCueTimes.push(c.time);
-      if(c.type === 'country') cueTimeByKey[c.key] = c.time;
+      if(c.type === 'country') clipSrcByKey[c.key] = 'clip_' + c.key + '.mp3';
     });
-    allCueTimes.sort((a, b) => a - b);
   }
-  const snippetAudio = new Audio('countries_song.mp3');
-  snippetAudio.preload = 'auto';
-  let snippetStopTimer = null;
+  const snippetAudio = new Audio();
   function playSnippet(key){
     return new Promise(resolve => {
-      const startT = cueTimeByKey[key];
-      if(startT === undefined){ resolve(); return; }
+      const src = clipSrcByKey[key];
+      if(!src){ resolve(); return; }
       // Don't let this short snippet overlap with the looping reference song
       // if it happens to be playing.
       if(refPlaying){
@@ -137,20 +136,11 @@ function createTester(opts) {
         el.songToggle.textContent = '▶️ Play';
         el.songToggle.classList.remove('playing');
       }
-      const nextT = allCueTimes.find(t => t > startT);
-      const dur = Math.min(nextT ? (nextT - startT) : 2, 2);
-
-      const doPlay = () => {
-        try { snippetAudio.currentTime = startT; } catch(e){}
-        snippetAudio.play().catch(() => {});
-        clearTimeout(snippetStopTimer);
-        snippetStopTimer = setTimeout(() => { snippetAudio.pause(); resolve(); }, dur * 1000);
-      };
-      if(snippetAudio.readyState >= 1){
-        doPlay();
-      } else {
-        snippetAudio.addEventListener('loadedmetadata', doPlay, { once: true });
-      }
+      snippetAudio.onended = null;
+      snippetAudio.pause();
+      snippetAudio.src = src;
+      snippetAudio.onended = () => resolve();
+      snippetAudio.play().catch(() => resolve());
     });
   }
 
@@ -318,7 +308,6 @@ function createTester(opts) {
 
   function newQuestion(){
     if(mode === 'sequence'){ renderSequenceGame(); return; }
-    clearTimeout(snippetStopTimer);
     snippetAudio.pause();
     if(browsing && (mode === 'pop' || mode === 'area')){
       renderBrowseList();
@@ -420,6 +409,16 @@ function createTester(opts) {
       label.className = 'qprompt-label';
       label.textContent = 'What comes next in the song?';
       el.qcard.appendChild(label);
+
+      const hint = document.createElement('p');
+      hint.className = 'order-hint';
+      hint.innerHTML = '🔊 Tap the little icon to listen &nbsp;·&nbsp; Tap the flag itself to answer';
+      el.qcard.appendChild(hint);
+
+      const seqLabel = document.createElement('p');
+      seqLabel.className = 'order-seq-label';
+      seqLabel.textContent = 'So far in the song:';
+      el.qcard.appendChild(seqLabel);
 
       const seqRow = document.createElement('div');
       seqRow.style.display = 'flex'; seqRow.style.justifyContent='center'; seqRow.style.gap='8px'; seqRow.style.marginBottom='16px';
@@ -526,19 +525,15 @@ function createTester(opts) {
     if(isCorrect){
       feedback.textContent = '¡Correcto! Nice work.';
       feedback.className = 'feedback correct';
-      if(mode !== 'order'){
-        const rec = progress[correctKey];
-        const wasMastered = isMastered(progress, correctKey);
-        const today = todayStr();
-        rec.correctDates.push(today);
-        saveProgress(progress);
-        const nowMastered = isMastered(progress, correctKey);
-        if(!wasMastered && nowMastered){
-          const label = byKey[correctKey] ? byKey[correctKey].name : '';
-          celebrate(true, label + ' mastered!');
-        } else {
-          celebrate(false);
-        }
+      const rec = progress[correctKey];
+      const wasMastered = isMastered(progress, correctKey);
+      const today = todayStr();
+      rec.correctDates.push(today);
+      saveProgress(progress);
+      const nowMastered = isMastered(progress, correctKey);
+      if(!wasMastered && nowMastered){
+        const label = byKey[correctKey] ? byKey[correctKey].name : '';
+        celebrate(true, label + ' mastered!');
       } else {
         celebrate(false);
       }
@@ -596,7 +591,6 @@ function createTester(opts) {
       el.songToggle.textContent = '▶️ Play';
       el.songToggle.classList.remove('playing');
     }
-    clearTimeout(snippetStopTimer);
     snippetAudio.pause();
     seqRunId += 1;
   }
@@ -801,13 +795,13 @@ function createTester(opts) {
       mode = btn.dataset.mode;
       if(leavingSequence){
         seqRunId += 1; // abandon any in-flight async playback from the game
-        clearTimeout(snippetStopTimer);
         snippetAudio.pause();
       }
       const isCompare = (mode === 'pop' || mode === 'area');
       const isSequence = (mode === 'sequence');
       el.masteryBar.style.display = (isCompare || isSequence) ? 'none' : 'flex';
       el.starGrid.style.display = (isCompare || isSequence) ? 'none' : 'grid';
+      el.stargridLabel.style.display = (isCompare || isSequence) ? 'none' : 'block';
       el.streakBar.style.display = isCompare ? 'flex' : 'none';
       el.streakHint.classList.toggle('hidden', !isCompare);
       el.browseBtn.classList.toggle('hidden', !isCompare);
