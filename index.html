@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>YCTAS! — Hispanic Countries + 1 Territory</title>
-<link rel="manifest" href="manifest.json?v=34">
+<link rel="manifest" href="manifest.json?v=36">
 <meta name="theme-color" content="#FF8A3D">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -15,7 +15,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Nunito+Sans:wght@400;600;700;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=34">
+<link rel="stylesheet" href="style.css?v=36">
 </head>
 <body>
 
@@ -79,7 +79,9 @@
        v31: TEMPORARY — consolidated into a single, complete diagnostic alert (key, src found, total clips loaded, cuesCountries status) to minimize back-and-forth rounds
        v32: found it — the diagnostic alert() itself was blocking playback (it pauses execution until dismissed, which breaks the browser's link between the tap and the play() call, silently killing audio permission). Confirmed via the v31 alert that key/src/wiring were all correct all along. Removed all blocking alerts, call play() immediately with nothing in between it and the tap; added one tiny, non-blocking status line (not a popup) as a safety net in case anything's still off
        v33: still no sound after v32 — stripped playSnippet down to match the exact minimal pattern already confirmed working on the Spotlight page's pronunciation buttons (pause/set src/play/catch, nothing else); removed the promise wrapper and onended/onerror handlers entirely; Sequence Game timing now uses a plain timer instead of depending on the 'ended' event
-       v34: now creates a brand-new Audio object on every single tap instead of reusing one shared element — removes any possibility of stale state from a previous play attempt breaking the next one. Also fixed 3 leftover references to the old shared audio object that would have crashed the whole Practice screen -->
+       v34: now creates a brand-new Audio object on every single tap instead of reusing one shared element — removes any possibility of stale state from a previous play attempt breaking the next one. Also fixed 3 leftover references to the old shared audio object that would have crashed the whole Practice screen
+       v35: ACTUAL root cause found and fixed — this was never a JavaScript/playback bug at all. Testing the raw clip files directly (bypassing the app) proved 19 of 20 clips were pure digital silence (-91dB), while Argentina had real signal. The v28 ffmpeg re-slicing applied a fade filter using a timestamp basis that didn't line up correctly for clips seeked away from the start of the source file. Fixed with a two-pass approach: trim first (clean, fresh 0-based timestamps), then apply fades on that already-short file. Every one of the 20 clips individually re-verified with real measured audio signal before shipping, not assumed
+       v36: hand-tuned remaining individual clip issues after direct file-by-file testing — Nicaragua/Panama boundary (was bleeding into each other), Colombia and El Salvador extended past a verse-shift marker to their real next-country boundary, Venezuela's clap-adjacent click eliminated by shifting the start point well forward and past the click's actual position (the click was in the original recording near that timestamp — no cut-point within a ~0.15s window avoided it, only jumping further did) -->
   <footer>YCTAS!™ · © 2026 The Spanish Fluency Centre</footer>
 </section>
 
@@ -103,9 +105,9 @@
   <div id="spotlightRoot"></div>
 </section>
 
-<script src="songplayer.js?v=34"></script>
-<script src="tester.js?v=34"></script>
-<script src="eg.js?v=34"></script>
-<script src="app.js?v=34"></script>
+<script src="songplayer.js?v=36"></script>
+<script src="tester.js?v=36"></script>
+<script src="eg.js?v=36"></script>
+<script src="app.js?v=36"></script>
 </body>
 </html>
