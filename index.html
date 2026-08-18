@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>YCTAS! — Hispanic Countries + 1 Territory</title>
-<link rel="manifest" href="manifest.json?v=32">
+<link rel="manifest" href="manifest.json?v=34">
 <meta name="theme-color" content="#FF8A3D">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -15,7 +15,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Nunito+Sans:wght@400;600;700;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=32">
+<link rel="stylesheet" href="style.css?v=34">
 </head>
 <body>
 
@@ -77,7 +77,9 @@
        v29: TEMPORARY diagnostic alerts added to snippet playback (Song Order / Sequence Game silent-audio report — cause not yet found, needs on-device error info) — remove once resolved. Also: precisely patched the two real map gaps near Peru and above Uruguay using proper geometry analysis (not guesswork) — both fully closed now
        v30: TEMPORARY — added an entry-point alert plus a "no clip found" alert, since v29's alerts never fired (no sound, no popup) — this narrows down whether the tap is even reaching the playback code at all
        v31: TEMPORARY — consolidated into a single, complete diagnostic alert (key, src found, total clips loaded, cuesCountries status) to minimize back-and-forth rounds
-       v32: found it — the diagnostic alert() itself was blocking playback (it pauses execution until dismissed, which breaks the browser's link between the tap and the play() call, silently killing audio permission). Confirmed via the v31 alert that key/src/wiring were all correct all along. Removed all blocking alerts, call play() immediately with nothing in between it and the tap; added one tiny, non-blocking status line (not a popup) as a safety net in case anything's still off -->
+       v32: found it — the diagnostic alert() itself was blocking playback (it pauses execution until dismissed, which breaks the browser's link between the tap and the play() call, silently killing audio permission). Confirmed via the v31 alert that key/src/wiring were all correct all along. Removed all blocking alerts, call play() immediately with nothing in between it and the tap; added one tiny, non-blocking status line (not a popup) as a safety net in case anything's still off
+       v33: still no sound after v32 — stripped playSnippet down to match the exact minimal pattern already confirmed working on the Spotlight page's pronunciation buttons (pause/set src/play/catch, nothing else); removed the promise wrapper and onended/onerror handlers entirely; Sequence Game timing now uses a plain timer instead of depending on the 'ended' event
+       v34: now creates a brand-new Audio object on every single tap instead of reusing one shared element — removes any possibility of stale state from a previous play attempt breaking the next one. Also fixed 3 leftover references to the old shared audio object that would have crashed the whole Practice screen -->
   <footer>YCTAS!™ · © 2026 The Spanish Fluency Centre</footer>
 </section>
 
@@ -101,9 +103,9 @@
   <div id="spotlightRoot"></div>
 </section>
 
-<script src="songplayer.js?v=32"></script>
-<script src="tester.js?v=32"></script>
-<script src="eg.js?v=32"></script>
-<script src="app.js?v=32"></script>
+<script src="songplayer.js?v=34"></script>
+<script src="tester.js?v=34"></script>
+<script src="eg.js?v=34"></script>
+<script src="app.js?v=34"></script>
 </body>
 </html>

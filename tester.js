@@ -119,45 +119,31 @@ function createTester(opts) {
   // of the *previous* country's audio. Playing a pre-cut file from its own
   // start avoids runtime seeking (and that imprecision) entirely.
   const clipSrcByKey = {};
+  const clipDurByKey = {};
   if(cuesCountries){
-    cuesCountries.forEach(c => {
-      if(c.type === 'country') clipSrcByKey[c.key] = 'clip_' + c.key + '.mp3';
+    const countryEntries = cuesCountries.filter(c => c.type === 'country');
+    const allTimes = cuesCountries.map(c => c.time).sort((a,b) => a-b);
+    countryEntries.forEach(c => {
+      clipSrcByKey[c.key] = 'clip_' + c.key + '.mp3';
+      const nxt = allTimes.find(t => t > c.time);
+      clipDurByKey[c.key] = nxt ? Math.min(nxt - c.time, 3.2) : 2.8;
     });
   }
-  const snippetAudio = new Audio();
   function playSnippet(key){
-    return new Promise(resolve => {
-      const src = clipSrcByKey[key];
-      if(!src){ resolve(); return; }
-      // Don't let this short snippet overlap with the looping reference song
-      // if it happens to be playing.
-      if(refPlaying){
-        refAudio.pause();
-        refPlaying = false;
-        el.songToggle.textContent = '▶️ Play';
-        el.songToggle.classList.remove('playing');
-      }
-      snippetAudio.onended = null;
-      snippetAudio.onerror = null;
-      snippetAudio.pause();
-      snippetAudio.src = src;
-      snippetAudio.onended = () => resolve();
-      snippetAudio.onerror = () => resolve();
-      // Calling play() as the very first thing, with nothing blocking in
-      // between it and the tap, is what keeps the browser treating this as
-      // directly tied to the user's gesture — a blocking alert() here
-      // (as an earlier diagnostic build had) breaks that link and silently
-      // prevents playback.
-      const playPromise = snippetAudio.play();
-      if(playPromise && playPromise.catch){
-        playPromise.then(() => {
-          if(el.snippetDebug) el.snippetDebug.textContent = '✓ played: ' + src;
-        }).catch(err => {
-          if(el.snippetDebug) el.snippetDebug.textContent = '✗ ' + src + ' — ' + err.name + ': ' + err.message;
-          resolve();
-        });
-      }
-    });
+    const src = clipSrcByKey[key];
+    if(!src) return Promise.resolve();
+    if(refPlaying){
+      refAudio.pause();
+      refPlaying = false;
+      el.songToggle.textContent = '▶️ Play';
+      el.songToggle.classList.remove('playing');
+    }
+    // A brand-new Audio object every tap — removes any chance of a shared,
+    // reused element carrying over stale/broken state from a prior attempt.
+    const a = new Audio(src);
+    a.play().catch(() => {});
+    const dur = clipDurByKey[key] || 2;
+    return new Promise(resolve => setTimeout(resolve, dur * 1000));
   }
 
   function loadProgress(){
@@ -324,7 +310,6 @@ function createTester(opts) {
 
   function newQuestion(){
     if(mode === 'sequence'){ renderSequenceGame(); return; }
-    snippetAudio.pause();
     if(browsing && (mode === 'pop' || mode === 'area')){
       renderBrowseList();
       return;
@@ -607,7 +592,6 @@ function createTester(opts) {
       el.songToggle.textContent = '▶️ Play';
       el.songToggle.classList.remove('playing');
     }
-    snippetAudio.pause();
     seqRunId += 1;
   }
 
@@ -811,7 +795,6 @@ function createTester(opts) {
       mode = btn.dataset.mode;
       if(leavingSequence){
         seqRunId += 1; // abandon any in-flight async playback from the game
-        snippetAudio.pause();
       }
       const isCompare = (mode === 'pop' || mode === 'area');
       const isSequence = (mode === 'sequence');
