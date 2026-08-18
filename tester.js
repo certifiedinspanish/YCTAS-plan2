@@ -26,7 +26,6 @@ function createTester(opts) {
       <button class="modebtn active" data-mode="c2cap">Country → Capital</button>
       <button class="modebtn" data-mode="cap2c">Capital → Country</button>
       <button class="modebtn" data-mode="order">Song Order</button>
-      <button class="modebtn" data-mode="sequence">🏅 Sequence Game</button>
       <button class="modebtn" data-mode="pop">Compare: People</button>
       <button class="modebtn" data-mode="area">Compare: Size</button>
     </div>
@@ -595,7 +594,14 @@ function createTester(opts) {
     seqRunId += 1;
   }
 
-  // Sequence Game — same mechanic as Plan 1's verb Sequence Game, ported to
+  // Sequence Game — DISABLED (removed from the mode picker, unreachable).
+  // The mechanic itself is sound (matches Plan 1's verb game), but it reused
+  // the Song Order snippet clips, which were cut for smooth, tight flow
+  // *within* the continuous song — not for clear, separated back-to-back
+  // playback. Result: overlapping/distorted audio and no real feedback.
+  // Needs its own dedicated, isolated audio recordings (like Plan 1's) before
+  // being brought back — not a code fix, an asset fix.
+  // Same mechanic as Plan 1's verb Sequence Game, ported to
   // countries + the real song audio (via playSnippet) instead of recorded
   // verb clips. Practice-only: retirement here never touches mastery stars.
   const SEQ_LENGTH = 3;
@@ -837,7 +843,7 @@ function createTester(opts) {
   return {
     pause: pauseReferenceAudio,
     quickPlay(){
-      const modes = ['c2cap', 'cap2c', 'order', 'sequence', 'pop', 'area'];
+      const modes = ['c2cap', 'cap2c', 'order', 'pop', 'area'];
       const pick = modes[Math.floor(Math.random() * modes.length)];
       const btn = container.querySelector('.modebtn[data-mode="' + pick + '"]');
       if(btn) btn.click();
