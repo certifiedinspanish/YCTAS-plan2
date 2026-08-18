@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>YCTAS! — Hispanic Countries + 1 Territory</title>
-<link rel="manifest" href="manifest.json?v=38">
+<link rel="manifest" href="manifest.json?v=40">
 <meta name="theme-color" content="#FF8A3D">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -15,7 +15,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Nunito+Sans:wght@400;600;700;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=38">
+<link rel="stylesheet" href="style.css?v=40">
 </head>
 <body>
 
@@ -83,7 +83,9 @@
        v35: ACTUAL root cause found and fixed — this was never a JavaScript/playback bug at all. Testing the raw clip files directly (bypassing the app) proved 19 of 20 clips were pure digital silence (-91dB), while Argentina had real signal. The v28 ffmpeg re-slicing applied a fade filter using a timestamp basis that didn't line up correctly for clips seeked away from the start of the source file. Fixed with a two-pass approach: trim first (clean, fresh 0-based timestamps), then apply fades on that already-short file. Every one of the 20 clips individually re-verified with real measured audio signal before shipping, not assumed
        v36: hand-tuned remaining individual clip issues after direct file-by-file testing — Nicaragua/Panama boundary (was bleeding into each other), Colombia and El Salvador extended past a verse-shift marker to their real next-country boundary, Venezuela's clap-adjacent click eliminated by shifting the start point well forward and past the click's actual position (the click was in the original recording near that timestamp — no cut-point within a ~0.15s window avoided it, only jumping further did)
        v37: Sequence Game removed from the mode picker (not deleted, just disabled/unreachable) — the mechanic is sound but it reused Song Order's snippet clips, which were cut for smooth flow within the song, not clear back-to-back standalone playback. Result was overlapping, distorted audio with no real feedback. Needs dedicated, separately-recorded audio (like Plan 1's) before being rebuilt — an asset problem, not a code problem. Song Order confirmed working well and stays
-       v38: Spain inset now shows Portugal and France as geographic context (dashed borders, labeled), same treatment as the Americas map — Spain was floating with no neighbors shown before. Built from real geographic data, calibrated to Spain's existing shape using its own bounding box (not guessed) -->
+       v38: Spain inset now shows Portugal and France as geographic context (dashed borders, labeled), same treatment as the Americas map — Spain was floating with no neighbors shown before. Built from real geographic data, calibrated to Spain's existing shape using its own bounding box (not guessed)
+       v39: France/Portugal labels made prominent and bold per design direction (fewer neighbors here than the Americas map, so no clutter problem — they can stand out clearly). Fixed three real bugs found along the way: Portugal's shape data included the Azores and Madeira (wildly wrong coordinates), the inset was too small on-screen (30px) for any label to be legible regardless of internal sizing, and Spain's own shape was silently covering part of the labels due to draw order
+       v40: offline support added (service worker) — the app now saves itself onto the device the first time it's opened with internet, and keeps fully working (songs, games, progress) with no connection after that. Cache is version-tied, same fix pattern used everywhere else, so a new upload always forces a fresh save instead of risking a stale offline copy -->
   <footer>YCTAS!™ · © 2026 The Spanish Fluency Centre</footer>
 </section>
 
@@ -107,9 +109,9 @@
   <div id="spotlightRoot"></div>
 </section>
 
-<script src="songplayer.js?v=38"></script>
-<script src="tester.js?v=38"></script>
-<script src="eg.js?v=38"></script>
-<script src="app.js?v=38"></script>
+<script src="songplayer.js?v=40"></script>
+<script src="tester.js?v=40"></script>
+<script src="eg.js?v=40"></script>
+<script src="app.js?v=40"></script>
 </body>
 </html>

@@ -166,6 +166,7 @@ body{
 .map .context-shape-backing{fill:#D9DEE8; stroke:#D9DEE8; stroke-width:6; pointer-events:none;}
 .map .context-patch{fill:#D9DEE8; stroke:none; pointer-events:none;}
 .map .context-label{fill:#3D4658; font-family:'Nunito Sans',sans-serif; pointer-events:none;}
+.spain-context-label{fill:#1B3B6F; font-family:'Baloo 2',sans-serif; pointer-events:none;}
 .map .context-leader{stroke:#8A94AA; stroke-width:0.7; pointer-events:none;}
 .map .context-leader-dot{fill:#4A5468; pointer-events:none;}
 .map .water-label{fill:#6FA8D8; font-size:11px; font-style:italic; font-family:'Nunito Sans',sans-serif; pointer-events:none;}
@@ -180,7 +181,7 @@ body{
   background:rgba(255,255,255,0.92); border:2px solid var(--line); border-radius:8px;
   padding:4px 6px; box-shadow:var(--shadow-soft);
 }
-.spain-inset svg{ height:30px; width:auto; }
+.spain-inset svg{ height:68px; width:auto; }
 .spain-inset .label{font-size:9px;color:var(--text-muted);margin-top:2px;letter-spacing:0.3px;font-weight:700;}
 
 /* Verse staircase */

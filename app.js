@@ -4,18 +4,28 @@ async function loadJSON(path){
   return res.json();
 }
 
+// Offline support: saves the app onto the device after the first visit with
+// internet, so it keeps working (songs, games, progress) with no connection
+// after that. Fails silently on older browsers that don't support this —
+// the app just works online-only there, same as before.
+if('serviceWorker' in navigator){
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch(() => {});
+  });
+}
+
 async function main(){
   // Load all shared data once. Flags are referenced by relative path (not
   // embedded), same as the audio files — this only works when served over
   // http/https (e.g. GitHub Pages), not when double-clicking index.html
   // directly from disk, since browsers block fetch() on file:// URLs.
   const [countries, cuesCountries, cuesCapitals, mapData, compareData, egData] = await Promise.all([
-    loadJSON('countries.json?v=38'),
-    loadJSON('cues_countries.json?v=38'),
-    loadJSON('cues_capitals.json?v=38'),
-    loadJSON('map.json?v=38'),
-    loadJSON('compare.json?v=38'),
-    loadJSON('eg_data.json?v=38'),
+    loadJSON('countries.json?v=40'),
+    loadJSON('cues_countries.json?v=40'),
+    loadJSON('cues_capitals.json?v=40'),
+    loadJSON('map.json?v=40'),
+    loadJSON('compare.json?v=40'),
+    loadJSON('eg_data.json?v=40'),
   ]);
 
   const byKey = {};
