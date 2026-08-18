@@ -135,10 +135,31 @@ function createSongPlayer(opts) {
   // Spain now lives as a small floating inset in the corner of the SAME map,
   // instead of a separate side panel that was splitting the space in half.
   const sp = mapData.spain;
+  const spTopExt = sp.topExtension || 0;
   const spainWrap = document.createElement('div');
   spainWrap.className = 'spain-inset';
   const spSvg = document.createElementNS(svgNS, 'svg');
-  spSvg.setAttribute('viewBox', '0 0 ' + sp.width + ' ' + sp.height);
+  spSvg.setAttribute('viewBox', '0 -' + spTopExt + ' ' + sp.width + ' ' + (sp.height + spTopExt));
+  // Portugal + France, for geographic context only — same non-interactive
+  // pattern as the Americas map's context layer, kept structurally separate
+  // from Spain's own shape/pin so it can never become clickable.
+  if(sp.context){
+    for (const c of Object.values(sp.context)) {
+      const cpath = document.createElementNS(svgNS, 'path');
+      cpath.setAttribute('d', c.d);
+      cpath.setAttribute('class', 'context-shape');
+      spSvg.appendChild(cpath);
+    }
+  }
+  (sp.contextLabels || []).forEach(l => {
+    const t = document.createElementNS(svgNS, 'text');
+    t.setAttribute('x', l.x); t.setAttribute('y', l.y);
+    t.setAttribute('class', 'context-label');
+    t.setAttribute('font-size', l.size); t.setAttribute('font-weight', l.weight);
+    t.setAttribute('text-anchor', l.anchor);
+    t.textContent = l.text;
+    spSvg.appendChild(t);
+  });
   const spPath = document.createElementNS(svgNS, 'path');
   spPath.setAttribute('d', sp.d);
   spPath.setAttribute('class', 'country-shape');
