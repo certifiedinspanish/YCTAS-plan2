@@ -9,6 +9,7 @@ function createTester(opts) {
       Get it right a few times, on a couple of different days, and you'll earn a ⭐ for that country — forever!
     </p>
     <div class="celebrate-toast" data-el="celebrateToast"></div>
+    <p style="text-align:center;font-size:10px;color:#ccc;margin:0 0 4px;" data-el="snippetDebug"></p>
 
     <div class="songref">
       <p class="songref-label">🎵 Need more help? You can listen to either song while playing the games.</p>
@@ -127,13 +128,6 @@ function createTester(opts) {
   function playSnippet(key){
     return new Promise(resolve => {
       const src = clipSrcByKey[key];
-      const totalKeys = Object.keys(clipSrcByKey).length;
-      alert(
-        'key: "' + key + '"\n' +
-        'src found: ' + (src ? src : 'NONE') + '\n' +
-        'total clips loaded: ' + totalKeys + '\n' +
-        'cuesCountries passed in: ' + (cuesCountries ? cuesCountries.length + ' entries' : 'MISSING/undefined')
-      );
       if(!src){ resolve(); return; }
       // Don't let this short snippet overlap with the looping reference song
       // if it happens to be playing.
@@ -148,17 +142,21 @@ function createTester(opts) {
       snippetAudio.pause();
       snippetAudio.src = src;
       snippetAudio.onended = () => resolve();
-      // TEMPORARY diagnostic (v29) — surfaces the exact failure on-screen
-      // since remote debugging isn't available. Safe to remove once the
-      // real cause is found.
-      snippetAudio.onerror = () => {
-        alert('Snippet audio error\nsrc: ' + src + '\ncode: ' + (snippetAudio.error ? snippetAudio.error.code : '?'));
-        resolve();
-      };
-      snippetAudio.play().catch(err => {
-        alert('Snippet play() rejected\nsrc: ' + src + '\n' + err.name + ': ' + err.message);
-        resolve();
-      });
+      snippetAudio.onerror = () => resolve();
+      // Calling play() as the very first thing, with nothing blocking in
+      // between it and the tap, is what keeps the browser treating this as
+      // directly tied to the user's gesture — a blocking alert() here
+      // (as an earlier diagnostic build had) breaks that link and silently
+      // prevents playback.
+      const playPromise = snippetAudio.play();
+      if(playPromise && playPromise.catch){
+        playPromise.then(() => {
+          if(el.snippetDebug) el.snippetDebug.textContent = '✓ played: ' + src;
+        }).catch(err => {
+          if(el.snippetDebug) el.snippetDebug.textContent = '✗ ' + src + ' — ' + err.name + ': ' + err.message;
+          resolve();
+        });
+      }
     });
   }
 
