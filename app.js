@@ -10,8 +10,32 @@ async function loadJSON(path){
 // the app just works online-only there, same as before.
 if('serviceWorker' in navigator){
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('sw.js').catch(() => {});
+    navigator.serviceWorker.register('sw.js').catch((err) => {
+      showSwStatus('Offline setup failed to register: ' + err.message);
+    });
   });
+  navigator.serviceWorker.addEventListener('message', (event) => {
+    if(event.data && event.data.type === 'sw-cache-report'){
+      const { total, failedCount, failed } = event.data;
+      if(failedCount === 0){
+        showSwStatus('✓ Offline ready — all ' + total + ' files saved for offline use.', true);
+      } else {
+        showSwStatus('⚠ Offline setup incomplete: ' + failedCount + ' of ' + total + ' files failed —\n' + failed.join('\n'));
+      }
+    }
+  });
+}
+function showSwStatus(msg, autoHide){
+  let el = document.getElementById('swStatus');
+  if(!el){
+    el = document.createElement('div');
+    el.id = 'swStatus';
+    el.style.cssText = 'position:fixed;bottom:8px;left:8px;right:8px;background:#1B3B6F;color:#fff;' +
+      'font-size:11px;padding:8px 10px;border-radius:8px;z-index:999;white-space:pre-wrap;max-height:40vh;overflow:auto;';
+    document.body.appendChild(el);
+  }
+  el.textContent = msg;
+  if(autoHide) setTimeout(() => el.remove(), 6000);
 }
 
 async function main(){
@@ -20,12 +44,12 @@ async function main(){
   // http/https (e.g. GitHub Pages), not when double-clicking index.html
   // directly from disk, since browsers block fetch() on file:// URLs.
   const [countries, cuesCountries, cuesCapitals, mapData, compareData, egData] = await Promise.all([
-    loadJSON('countries.json?v=40'),
-    loadJSON('cues_countries.json?v=40'),
-    loadJSON('cues_capitals.json?v=40'),
-    loadJSON('map.json?v=40'),
-    loadJSON('compare.json?v=40'),
-    loadJSON('eg_data.json?v=40'),
+    loadJSON('countries.json?v=41'),
+    loadJSON('cues_countries.json?v=41'),
+    loadJSON('cues_capitals.json?v=41'),
+    loadJSON('map.json?v=41'),
+    loadJSON('compare.json?v=41'),
+    loadJSON('eg_data.json?v=41'),
   ]);
 
   const byKey = {};

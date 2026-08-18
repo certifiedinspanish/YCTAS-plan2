@@ -9,11 +9,11 @@
 // a new version ships, this number bumps too, which makes the browser throw
 // away the old saved copy and fetch a completely fresh one — the same fix
 // that's been used everywhere else in this app to avoid stale-cache bugs.
-const CACHE_NAME = 'yctas-plan2-v40';
+const CACHE_NAME = 'yctas-plan2-v41';
 
 const FILES_TO_CACHE = [
   './',
-  'app.js?v=40',
+  'app.js?v=41',
   'apple-touch-icon.png',
   'argentina.png',
   'bolivia.png',
@@ -40,17 +40,17 @@ const FILES_TO_CACHE = [
   'clip_uruguay.mp3',
   'clip_venezuela.mp3',
   'colombia.png',
-  'compare.json?v=40',
+  'compare.json?v=41',
   'costa_rica.png',
-  'countries.json?v=40',
+  'countries.json?v=41',
   'countries_song.mp3',
   'cuba.png',
-  'cues_capitals.json?v=40',
-  'cues_countries.json?v=40',
+  'cues_capitals.json?v=41',
+  'cues_countries.json?v=41',
   'ecuador.png',
-  'eg.js?v=40',
+  'eg.js?v=41',
   'eg_capital.mp3',
-  'eg_data.json?v=40',
+  'eg_data.json?v=41',
   'eg_flag.png',
   'eg_gentilicio.mp3',
   'eg_malabo.mp3',
@@ -63,8 +63,8 @@ const FILES_TO_CACHE = [
   'icon-192.png',
   'icon-512.png',
   'index.html',
-  'manifest.json?v=40',
-  'map.json?v=40',
+  'manifest.json?v=41',
+  'map.json?v=41',
   'mexico.png',
   'nicaragua.png',
   'panama.png',
@@ -72,9 +72,9 @@ const FILES_TO_CACHE = [
   'peru.png',
   'puerto_rico.png',
   'republica_dominicana.png',
-  'songplayer.js?v=40',
-  'style.css?v=40',
-  'tester.js?v=40',
+  'songplayer.js?v=41',
+  'style.css?v=41',
+  'tester.js?v=41',
   'uruguay.png',
   'venezuela.png',
 ];
@@ -82,7 +82,25 @@ const FILES_TO_CACHE = [
 self.addEventListener('install', (event) => {
   self.skipWaiting();
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(FILES_TO_CACHE))
+    caches.open(CACHE_NAME).then(async (cache) => {
+      const failed = [];
+      for (const url of FILES_TO_CACHE) {
+        try {
+          const res = await fetch(url);
+          if (!res.ok) { failed.push(url + ' (HTTP ' + res.status + ')'); continue; }
+          await cache.put(url, res);
+        } catch (err) {
+          failed.push(url + ' (' + err.message + ')');
+        }
+      }
+      const clients = await self.clients.matchAll();
+      clients.forEach((c) => c.postMessage({
+        type: 'sw-cache-report',
+        total: FILES_TO_CACHE.length,
+        failedCount: failed.length,
+        failed: failed,
+      }));
+    })
   );
 });
 
