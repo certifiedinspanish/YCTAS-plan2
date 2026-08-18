@@ -126,13 +126,15 @@ function createTester(opts) {
   const snippetAudio = new Audio();
   function playSnippet(key){
     return new Promise(resolve => {
-      alert('playSnippet called with key: "' + key + '"');
       const src = clipSrcByKey[key];
-      if(!src){
-        alert('No clip found for key: "' + key + '"\nAvailable keys: ' + Object.keys(clipSrcByKey).join(', '));
-        resolve();
-        return;
-      }
+      const totalKeys = Object.keys(clipSrcByKey).length;
+      alert(
+        'key: "' + key + '"\n' +
+        'src found: ' + (src ? src : 'NONE') + '\n' +
+        'total clips loaded: ' + totalKeys + '\n' +
+        'cuesCountries passed in: ' + (cuesCountries ? cuesCountries.length + ' entries' : 'MISSING/undefined')
+      );
+      if(!src){ resolve(); return; }
       // Don't let this short snippet overlap with the looping reference song
       // if it happens to be playing.
       if(refPlaying){

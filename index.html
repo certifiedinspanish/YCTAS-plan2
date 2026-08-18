@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>YCTAS! — Hispanic Countries + 1 Territory</title>
-<link rel="manifest" href="manifest.json?v=30">
+<link rel="manifest" href="manifest.json?v=31">
 <meta name="theme-color" content="#FF8A3D">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -15,7 +15,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Nunito+Sans:wght@400;600;700;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=30">
+<link rel="stylesheet" href="style.css?v=31">
 </head>
 <body>
 
@@ -75,7 +75,8 @@
        v27: map geographic context layer — Brazil, Belize, Jamaica, Haiti, Guyana, Suriname, French Guiana, and The Bahamas now show as dashed, muted-gray borders (Brazil + United States labeled, others just bordered for orientation), plus Pacific/Atlantic/Caribbean labels; built from real geographic data (world-atlas), fitted to align with the existing map using known reference points; completely separate data/rendering path from the 20 interactive song countries, so it can never become clickable or affect any game; also shrank the audio player card and map so both fit on one phone screen together without scrolling
        v28: real fix for still-truncated snippet clips — v26 removed browser seeking but two bugs remained: (1) tagged start times lagged slightly behind the true word onset (normal human tap-reaction delay), now compensated with a small lead-in buffer; (2) longer phrases like "La República Dominicana" were being cut off by an arbitrary 2-second cap even when much more room was available, now uses the real gap to the next cue instead; added a tiny fade in/out to eliminate the audible click at cut points. Also added a partial backing layer to soften (not fully eliminate — flagged as still-open) two small border-seam gaps near Brazil
        v29: TEMPORARY diagnostic alerts added to snippet playback (Song Order / Sequence Game silent-audio report — cause not yet found, needs on-device error info) — remove once resolved. Also: precisely patched the two real map gaps near Peru and above Uruguay using proper geometry analysis (not guesswork) — both fully closed now
-       v30: TEMPORARY — added an entry-point alert plus a "no clip found" alert, since v29's alerts never fired (no sound, no popup) — this narrows down whether the tap is even reaching the playback code at all -->
+       v30: TEMPORARY — added an entry-point alert plus a "no clip found" alert, since v29's alerts never fired (no sound, no popup) — this narrows down whether the tap is even reaching the playback code at all
+       v31: TEMPORARY — consolidated into a single, complete diagnostic alert (key, src found, total clips loaded, cuesCountries status) to minimize back-and-forth rounds -->
   <footer>YCTAS!™ · © 2026 The Spanish Fluency Centre</footer>
 </section>
 
@@ -99,9 +100,9 @@
   <div id="spotlightRoot"></div>
 </section>
 
-<script src="songplayer.js?v=30"></script>
-<script src="tester.js?v=30"></script>
-<script src="eg.js?v=30"></script>
-<script src="app.js?v=30"></script>
+<script src="songplayer.js?v=31"></script>
+<script src="tester.js?v=31"></script>
+<script src="eg.js?v=31"></script>
+<script src="app.js?v=31"></script>
 </body>
 </html>
