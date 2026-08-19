@@ -1,5 +1,5 @@
 function createTester(opts) {
-  const { container, countries, flags, compareData, countriesAudioSrc, capitalsAudioSrc, cuesCountries } = opts;
+  const { container, countries, flags, compareData, countriesAudioSrc, capitalsAudioSrc, cuesCountries, cuesCapitals } = opts;
 
   container.innerHTML = `
     <div class="streakflame" data-el="dailyStreakWrap">
@@ -26,6 +26,7 @@ function createTester(opts) {
       <button class="modebtn active" data-mode="c2cap">Country → Capital</button>
       <button class="modebtn" data-mode="cap2c">Capital → Country</button>
       <button class="modebtn" data-mode="order">Song Order</button>
+      <button class="modebtn" data-mode="orderCap">Capitals Order</button>
       <button class="modebtn" data-mode="pop">Compare: People</button>
       <button class="modebtn" data-mode="area">Compare: Size</button>
     </div>
@@ -128,6 +129,11 @@ function createTester(opts) {
       clipDurByKey[c.key] = nxt ? Math.min(nxt - c.time, 3.2) : 2.8;
     });
   }
+  // Equatorial Guinea shows up in Compare mode but isn't one of the 20 song
+  // countries, so it has no clip_*.mp3 — reuse its own Spotlight-page
+  // pronunciation clip instead.
+  clipSrcByKey['equatorial_guinea'] = 'eg_name.mp3';
+  clipDurByKey['equatorial_guinea'] = 1.6;
   function playSnippet(key){
     const src = clipSrcByKey[key];
     if(!src) return Promise.resolve();
@@ -142,6 +148,34 @@ function createTester(opts) {
     const a = new Audio(src);
     a.play().catch(() => {});
     const dur = clipDurByKey[key] || 2;
+    return new Promise(resolve => setTimeout(resolve, dur * 1000));
+  }
+
+  // Capitals Order: same idea, using the Capitals song's own clips
+  // (country + capital spoken together, e.g. "Argentina, Buenos Aires").
+  const clipCapSrcByKey = {};
+  const clipCapDurByKey = {};
+  if(cuesCapitals){
+    const capEntries = cuesCapitals.filter(c => c.type === 'country');
+    const allCapTimes = cuesCapitals.map(c => c.time).sort((a,b) => a-b);
+    capEntries.forEach(c => {
+      clipCapSrcByKey[c.key] = 'clip_cap_' + c.key + '.mp3';
+      const nxt = allCapTimes.find(t => t > c.time);
+      clipCapDurByKey[c.key] = nxt ? Math.min(nxt - c.time, 4.5) : 4.2;
+    });
+  }
+  function playCapSnippet(key){
+    const src = clipCapSrcByKey[key];
+    if(!src) return Promise.resolve();
+    if(refPlaying){
+      refAudio.pause();
+      refPlaying = false;
+      el.songToggle.textContent = '▶️ Play';
+      el.songToggle.classList.remove('playing');
+    }
+    const a = new Audio(src);
+    a.play().catch(() => {});
+    const dur = clipCapDurByKey[key] || 3;
     return new Promise(resolve => setTimeout(resolve, dur * 1000));
   }
 
@@ -385,13 +419,94 @@ function createTester(opts) {
         const btn = document.createElement('button');
         btn.className = 'choice';
         btn.dataset.key = opt.key;
+        const flagWrap = document.createElement('span');
+        flagWrap.className = 'choice-flag-wrap';
         const img = document.createElement('img');
         img.src = flagSrc(opt.key);
-        btn.appendChild(img);
+        flagWrap.appendChild(img);
+        const hearBadge = document.createElement('span');
+        hearBadge.className = 'choice-hear';
+        hearBadge.textContent = '🔊';
+        hearBadge.addEventListener('click', (e) => {
+          e.stopPropagation();
+          playSnippet(opt.key);
+        });
+        flagWrap.appendChild(hearBadge);
+        btn.appendChild(flagWrap);
         const span = document.createElement('span');
         span.textContent = opt.name;
         btn.appendChild(span);
         btn.addEventListener('click', () => answer(btn, opt.key === correctKey, correctKey));
+        choicesWrap.appendChild(btn);
+      });
+      el.qcard.appendChild(choicesWrap);
+
+    } else if(mode === 'orderCap'){
+      const N = 3;
+      const maxStart = countries.length - N - 1;
+      const start = Math.floor(Math.random() * Math.max(1, maxStart));
+      const shown = countries.slice(start, start + N);
+      const correctNext = countries[start + N];
+      const distractors = pickRandom(countries, 3, correctNext.key);
+      const options = [correctNext, ...distractors].sort(() => Math.random()-0.5);
+
+      const label = document.createElement('div');
+      label.className = 'qprompt-label';
+      label.textContent = 'What comes next in the Capitals song?';
+      el.qcard.appendChild(label);
+
+      const hint = document.createElement('p');
+      hint.className = 'order-hint';
+      hint.innerHTML = '🔊 Tap the little icon to listen &nbsp;·&nbsp; Tap the flag itself to answer';
+      el.qcard.appendChild(hint);
+
+      const seqLabel = document.createElement('p');
+      seqLabel.className = 'order-seq-label';
+      seqLabel.textContent = 'So far in the song:';
+      el.qcard.appendChild(seqLabel);
+
+      const seqRow = document.createElement('div');
+      seqRow.style.display = 'flex'; seqRow.style.justifyContent='center'; seqRow.style.gap='8px'; seqRow.style.marginBottom='16px';
+      shown.forEach(c => {
+        const flagBtn = document.createElement('button');
+        flagBtn.className = 'seq-flag-btn';
+        flagBtn.setAttribute('aria-label', 'Play ' + c.name + ' and ' + c.capital + ' in the song');
+        const img = document.createElement('img');
+        img.src = flagSrc(c.key);
+        flagBtn.appendChild(img);
+        const badge = document.createElement('span');
+        badge.className = 'seq-flag-hear';
+        badge.textContent = '🔊';
+        flagBtn.appendChild(badge);
+        flagBtn.addEventListener('click', () => playCapSnippet(c.key));
+        seqRow.appendChild(flagBtn);
+      });
+      el.qcard.appendChild(seqRow);
+
+      const choicesWrap = document.createElement('div');
+      choicesWrap.className = 'choices';
+      options.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.className = 'choice';
+        btn.dataset.key = opt.key;
+        const flagWrap = document.createElement('span');
+        flagWrap.className = 'choice-flag-wrap';
+        const img = document.createElement('img');
+        img.src = flagSrc(opt.key);
+        flagWrap.appendChild(img);
+        const hearBadge = document.createElement('span');
+        hearBadge.className = 'choice-hear';
+        hearBadge.textContent = '🔊';
+        hearBadge.addEventListener('click', (e) => {
+          e.stopPropagation();
+          playCapSnippet(opt.key);
+        });
+        flagWrap.appendChild(hearBadge);
+        btn.appendChild(flagWrap);
+        const span = document.createElement('span');
+        span.textContent = opt.capital;
+        btn.appendChild(span);
+        btn.addEventListener('click', () => answer(btn, opt.key === correctNext.key, correctNext.key));
         choicesWrap.appendChild(btn);
       });
       el.qcard.appendChild(choicesWrap);
@@ -843,7 +958,7 @@ function createTester(opts) {
   return {
     pause: pauseReferenceAudio,
     quickPlay(){
-      const modes = ['c2cap', 'cap2c', 'order', 'pop', 'area'];
+      const modes = ['c2cap', 'cap2c', 'order', 'orderCap', 'pop', 'area'];
       const pick = modes[Math.floor(Math.random() * modes.length)];
       const btn = container.querySelector('.modebtn[data-mode="' + pick + '"]');
       if(btn) btn.click();

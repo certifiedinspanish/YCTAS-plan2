@@ -44,12 +44,12 @@ async function main(){
   // http/https (e.g. GitHub Pages), not when double-clicking index.html
   // directly from disk, since browsers block fetch() on file:// URLs.
   const [countries, cuesCountries, cuesCapitals, mapData, compareData, egData] = await Promise.all([
-    loadJSON('countries.json?v=41'),
-    loadJSON('cues_countries.json?v=41'),
-    loadJSON('cues_capitals.json?v=41'),
-    loadJSON('map.json?v=41'),
-    loadJSON('compare.json?v=41'),
-    loadJSON('eg_data.json?v=41'),
+    loadJSON('countries.json?v=42'),
+    loadJSON('cues_countries.json?v=42'),
+    loadJSON('cues_capitals.json?v=42'),
+    loadJSON('map.json?v=42'),
+    loadJSON('compare.json?v=42'),
+    loadJSON('eg_data.json?v=42'),
   ]);
 
   const byKey = {};
@@ -131,7 +131,7 @@ async function main(){
         countries, flags, compareData,
         countriesAudioSrc: 'countries_song.mp3',
         capitalsAudioSrc: 'capitals_song.mp3',
-        cuesCountries,
+        cuesCountries, cuesCapitals,
       });
       practiceBuilt = true;
     }
