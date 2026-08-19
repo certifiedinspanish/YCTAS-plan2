@@ -25,7 +25,7 @@ function createTester(opts) {
     <div class="modepick">
       <button class="modebtn active" data-mode="c2cap">Country → Capital</button>
       <button class="modebtn" data-mode="cap2c">Capital → Country</button>
-      <button class="modebtn" data-mode="order">Song Order</button>
+      <button class="modebtn" data-mode="order">Countries Order</button>
       <button class="modebtn" data-mode="orderCap">Capitals Order</button>
       <button class="modebtn" data-mode="pop">Compare: People</button>
       <button class="modebtn" data-mode="area">Compare: Size</button>
@@ -334,8 +334,19 @@ function createTester(opts) {
       row.innerHTML =
         '<span style="font-size:12px;color:var(--text-muted);width:18px;">' + (i+1) + '</span>' +
         '<img src="' + flagSrc(c.key) + '" style="width:38px;height:26px;object-fit:cover;border-radius:4px;">' +
-        '<span style="font-weight:700;">' + c.name + '</span>' +
-        (mode === 'pop' ? '<span style="margin-left:auto;font-size:12px;color:var(--text-muted);">' + compareData[c.key].pop_band + '</span>' : '');
+        '<span style="font-weight:700;">' + c.name + '</span>';
+      const hearBtn = document.createElement('button');
+      hearBtn.textContent = '🔊';
+      hearBtn.setAttribute('aria-label', 'Hear ' + c.name);
+      hearBtn.style.cssText = 'background:none;border:none;font-size:14px;cursor:pointer;padding:2px 4px;';
+      hearBtn.addEventListener('click', () => playSnippet(c.key));
+      row.appendChild(hearBtn);
+      if(mode === 'pop'){
+        const band = document.createElement('span');
+        band.style.cssText = 'margin-left:auto;font-size:12px;color:var(--text-muted);';
+        band.textContent = compareData[c.key].pop_band;
+        row.appendChild(band);
+      }
       list.appendChild(row);
     });
     el.qcard.appendChild(list);
@@ -522,7 +533,7 @@ function createTester(opts) {
 
       const label = document.createElement('div');
       label.className = 'qprompt-label';
-      label.textContent = 'What comes next in the song?';
+      label.textContent = 'What comes next in the Countries song?';
       el.qcard.appendChild(label);
 
       const hint = document.createElement('p');

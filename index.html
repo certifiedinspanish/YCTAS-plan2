@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>YCTAS! — Hispanic Countries + 1 Territory</title>
-<link rel="manifest" href="manifest.json?v=42">
+<link rel="manifest" href="manifest.json?v=43">
 <meta name="theme-color" content="#FF8A3D">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -15,7 +15,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Nunito+Sans:wght@400;600;700;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=42">
+<link rel="stylesheet" href="style.css?v=43">
 </head>
 <body>
 
@@ -87,7 +87,8 @@
        v39: France/Portugal labels made prominent and bold per design direction (fewer neighbors here than the Americas map, so no clutter problem — they can stand out clearly). Fixed three real bugs found along the way: Portugal's shape data included the Azores and Madeira (wildly wrong coordinates), the inset was too small on-screen (30px) for any label to be legible regardless of internal sizing, and Spain's own shape was silently covering part of the labels due to draw order
        v40: offline support added (service worker) — the app now saves itself onto the device the first time it's opened with internet, and keeps fully working (songs, games, progress) with no connection after that. Cache is version-tied, same fix pattern used everywhere else, so a new upload always forces a fresh save instead of risking a stale offline copy
        v41: offline not working — added real diagnostics instead of guessing again. Service worker now tries each file individually (a single failed file was silently breaking the whole all-or-nothing cache before) and reports exactly what succeeded/failed as an on-screen message
-       v42: Compare: People and Compare: Size now have tap-to-hear on both flags, reusing the same clean Countries-song clips — reinforces flag recognition during the games students already replay for win streaks. New Capitals Order mode added, mirroring Song Order but built from the Capitals song's own clips (country + capital spoken together, e.g. "Argentina, Buenos Aires") — all 20 clips individually verified, 3 needed hand-tuning (Argentina, Puerto Rico, La República Dominicana), same technique as the Countries clips -->
+       v42: Compare: People and Compare: Size now have tap-to-hear on both flags, reusing the same clean Countries-song clips — reinforces flag recognition during the games students already replay for win streaks. New Capitals Order mode added, mirroring Song Order but built from the Capitals song's own clips (country + capital spoken together, e.g. "Argentina, Buenos Aires") — all 20 clips individually verified, 3 needed hand-tuning (Argentina, Puerto Rico, La República Dominicana), same technique as the Countries clips
+       v43: "Song Order" renamed to "Countries Order" for naming parity with Capitals Order; Compare mode's browse-rankings list now also has tap-to-hear on every flag -->
   <footer>YCTAS!™ · © 2026 The Spanish Fluency Centre</footer>
 </section>
 
@@ -111,9 +112,9 @@
   <div id="spotlightRoot"></div>
 </section>
 
-<script src="songplayer.js?v=42"></script>
-<script src="tester.js?v=42"></script>
-<script src="eg.js?v=42"></script>
-<script src="app.js?v=42"></script>
+<script src="songplayer.js?v=43"></script>
+<script src="tester.js?v=43"></script>
+<script src="eg.js?v=43"></script>
+<script src="app.js?v=43"></script>
 </body>
 </html>

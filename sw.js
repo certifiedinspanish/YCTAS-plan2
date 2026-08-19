@@ -1,19 +1,9 @@
 // YCTAS! Plan 2 — offline support (service worker)
-//
-// How this works, in plain terms: the first time a student opens the app
-// with internet, this quietly saves a full copy of every file onto their
-// device. After that, the app opens and works even with no internet at all
-// — songs, games, progress tracking, everything.
-//
-// CACHE_NAME is tied to the app's own version number on purpose. Every time
-// a new version ships, this number bumps too, which makes the browser throw
-// away the old saved copy and fetch a completely fresh one — the same fix
-// that's been used everywhere else in this app to avoid stale-cache bugs.
-const CACHE_NAME = 'yctas-plan2-v42';
+const CACHE_NAME = 'yctas-plan2-v43';
 
 const FILES_TO_CACHE = [
   './',
-  'app.js?v=42',
+  'app.js?v=43',
   'apple-touch-icon.png',
   'argentina.png',
   'bolivia.png',
@@ -60,17 +50,17 @@ const FILES_TO_CACHE = [
   'clip_uruguay.mp3',
   'clip_venezuela.mp3',
   'colombia.png',
-  'compare.json?v=42',
+  'compare.json?v=43',
   'costa_rica.png',
-  'countries.json?v=42',
+  'countries.json?v=43',
   'countries_song.mp3',
   'cuba.png',
-  'cues_capitals.json?v=42',
-  'cues_countries.json?v=42',
+  'cues_capitals.json?v=43',
+  'cues_countries.json?v=43',
   'ecuador.png',
-  'eg.js?v=42',
+  'eg.js?v=43',
   'eg_capital.mp3',
-  'eg_data.json?v=42',
+  'eg_data.json?v=43',
   'eg_flag.png',
   'eg_gentilicio.mp3',
   'eg_malabo.mp3',
@@ -83,8 +73,8 @@ const FILES_TO_CACHE = [
   'icon-192.png',
   'icon-512.png',
   'index.html',
-  'manifest.json?v=42',
-  'map.json?v=42',
+  'manifest.json?v=43',
+  'map.json?v=43',
   'mexico.png',
   'nicaragua.png',
   'panama.png',
@@ -92,9 +82,9 @@ const FILES_TO_CACHE = [
   'peru.png',
   'puerto_rico.png',
   'republica_dominicana.png',
-  'songplayer.js?v=42',
-  'style.css?v=42',
-  'tester.js?v=42',
+  'songplayer.js?v=43',
+  'style.css?v=43',
+  'tester.js?v=43',
   'uruguay.png',
   'venezuela.png',
 ];
