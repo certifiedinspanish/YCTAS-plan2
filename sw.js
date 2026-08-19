@@ -1,9 +1,14 @@
 // YCTAS! Plan 2 — offline support (service worker)
-const CACHE_NAME = 'yctas-plan2-v43';
+//
+// Saves a full copy of the app onto the device on the first online visit,
+// then works fully offline after that — songs, games, progress, everything.
+// CACHE_NAME is tied to the app's version, so every new version forces a
+// clean, fresh save instead of risking a stale offline copy.
+const CACHE_NAME = 'yctas-plan2-v44';
 
 const FILES_TO_CACHE = [
   './',
-  'app.js?v=43',
+  'app.js?v=44',
   'apple-touch-icon.png',
   'argentina.png',
   'bolivia.png',
@@ -50,17 +55,17 @@ const FILES_TO_CACHE = [
   'clip_uruguay.mp3',
   'clip_venezuela.mp3',
   'colombia.png',
-  'compare.json?v=43',
+  'compare.json?v=44',
   'costa_rica.png',
-  'countries.json?v=43',
+  'countries.json?v=44',
   'countries_song.mp3',
   'cuba.png',
-  'cues_capitals.json?v=43',
-  'cues_countries.json?v=43',
+  'cues_capitals.json?v=44',
+  'cues_countries.json?v=44',
   'ecuador.png',
-  'eg.js?v=43',
+  'eg.js?v=44',
   'eg_capital.mp3',
-  'eg_data.json?v=43',
+  'eg_data.json?v=44',
   'eg_flag.png',
   'eg_gentilicio.mp3',
   'eg_malabo.mp3',
@@ -73,8 +78,8 @@ const FILES_TO_CACHE = [
   'icon-192.png',
   'icon-512.png',
   'index.html',
-  'manifest.json?v=43',
-  'map.json?v=43',
+  'manifest.json?v=44',
+  'map.json?v=44',
   'mexico.png',
   'nicaragua.png',
   'panama.png',
@@ -82,9 +87,9 @@ const FILES_TO_CACHE = [
   'peru.png',
   'puerto_rico.png',
   'republica_dominicana.png',
-  'songplayer.js?v=43',
-  'style.css?v=43',
-  'tester.js?v=43',
+  'songplayer.js?v=44',
+  'style.css?v=44',
+  'tester.js?v=44',
   'uruguay.png',
   'venezuela.png',
 ];
@@ -94,15 +99,15 @@ self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then(async (cache) => {
       const failed = [];
-      for (const url of FILES_TO_CACHE) {
+      await Promise.all(FILES_TO_CACHE.map(async (url) => {
         try {
           const res = await fetch(url);
-          if (!res.ok) { failed.push(url + ' (HTTP ' + res.status + ')'); continue; }
+          if (!res.ok) { failed.push(url + ' (HTTP ' + res.status + ')'); return; }
           await cache.put(url, res);
         } catch (err) {
           failed.push(url + ' (' + err.message + ')');
         }
-      }
+      }));
       const clients = await self.clients.matchAll();
       clients.forEach((c) => c.postMessage({
         type: 'sw-cache-report',
@@ -125,6 +130,15 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
   event.respondWith(
-    caches.match(event.request).then((cached) => cached || fetch(event.request))
+    caches.match(event.request).then((cached) => {
+      if(cached) return cached;
+      return fetch(event.request).then((res) => {
+        if(res && res.ok){
+          const copy = res.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));
+        }
+        return res;
+      });
+    })
   );
 });
