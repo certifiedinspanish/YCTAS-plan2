@@ -1,5 +1,5 @@
 // YCTAS! Plan 2 — offline support (service worker)
-const CACHE_NAME = 'yctas-plan2-v46';
+const CACHE_NAME = 'yctas-plan2-v50';
 
 const FILES_TO_CACHE = [
   './',
@@ -87,6 +87,14 @@ const FILES_TO_CACHE = [
   'tester.js?v=46',
   'uruguay.png',
   'venezuela.png',
+  'game3.js?v=27',
+  'game3_data.json?v=27',
+  'match_games.js?v=27',
+  'match_games_data.json?v=27',
+  'paula.png',
+  'lez.png',
+  'clifford.png',
+  'harry.png',
 ];
 
 self.addEventListener('install', (event) => {

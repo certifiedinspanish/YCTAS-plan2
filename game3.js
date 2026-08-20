@@ -155,7 +155,7 @@ function createGame3(opts) {
       if (mode === 'guided' && owner && activeChars && !activeChars.includes(owner)) {
         disabled = true;
       }
-      return `<button class="g3-tile ${disabled ? 'disabled' : ''}" data-key="${w.key}" data-audio="${w.audio}" ${disabled ? 'disabled' : ''}>${w.display}</button>`;
+      return `<button class="g3-tile ${disabled ? 'disabled' : ''}" data-key="${w.key}" data-audio="${w.audio}" ${disabled ? 'disabled' : ''}>${w.word}</button>`;
     }).join('');
 
     const answered = story.answerBank[speaker.name].length;
