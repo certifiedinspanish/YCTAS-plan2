@@ -1,0 +1,715 @@
+{
+  "storyId": "cuatro_amigos",
+  "title": "Cuatro Amigos",
+  "characters": [
+    {
+      "name": "Paula",
+      "img": "paula.png",
+      "gender": "f",
+      "trait_words": [
+        "chica",
+        "alta"
+      ]
+    },
+    {
+      "name": "Lez",
+      "img": "lez.png",
+      "gender": "m",
+      "trait_words": [
+        "chico",
+        "rico"
+      ]
+    },
+    {
+      "name": "Clifford",
+      "img": "clifford.png",
+      "gender": "m",
+      "trait_words": [
+        "perro",
+        "grande"
+      ]
+    },
+    {
+      "name": "Harry",
+      "img": "harry.png",
+      "gender": "m",
+      "trait_words": [
+        "elefante",
+        "pequeño"
+      ]
+    }
+  ],
+  "vocabulary": [
+    {
+      "word": "alta",
+      "key": "alta",
+      "audio": "dts2_word_alta.mp3"
+    },
+    {
+      "word": "chica",
+      "key": "chica",
+      "audio": "dts2_word_chica.mp3"
+    },
+    {
+      "word": "chico",
+      "key": "chico",
+      "audio": "dts2_word_chico.mp3"
+    },
+    {
+      "word": "elefante",
+      "key": "elefante",
+      "audio": "dts2_word_elefante.mp3"
+    },
+    {
+      "word": "eres",
+      "key": "eres",
+      "audio": "dts2_word_eres.mp3"
+    },
+    {
+      "word": "es",
+      "key": "es",
+      "audio": "dts2_word_es.mp3"
+    },
+    {
+      "word": "grande",
+      "key": "grande",
+      "audio": "dts2_word_grande.mp3"
+    },
+    {
+      "word": "pequeño",
+      "key": "pequeño",
+      "audio": "dts2_word_pequeno.mp3"
+    },
+    {
+      "word": "perro",
+      "key": "perro",
+      "audio": "dts2_word_perro.mp3"
+    },
+    {
+      "word": "rico",
+      "key": "rico",
+      "audio": "dts2_word_rico.mp3"
+    },
+    {
+      "word": "soy",
+      "key": "soy",
+      "audio": "dts2_word_soy.mp3"
+    },
+    {
+      "word": "un",
+      "key": "un",
+      "audio": "dts2_word_un.mp3"
+    },
+    {
+      "word": "una",
+      "key": "una",
+      "audio": "dts2_word_una.mp3"
+    },
+    {
+      "word": "Clifford",
+      "key": "clifford",
+      "audio": "dts2_word_clifford.mp3"
+    },
+    {
+      "word": "Harry",
+      "key": "harry",
+      "audio": "dts2_word_harry.mp3"
+    },
+    {
+      "word": "Lez",
+      "key": "lez",
+      "audio": "dts2_word_lez.mp3"
+    },
+    {
+      "word": "Paula",
+      "key": "paula",
+      "audio": "dts2_word_paula.mp3"
+    }
+  ],
+  "answerBank": {
+    "Paula": [
+      {
+        "category": "Yo",
+        "about": "Paula",
+        "sentence": "Soy Paula",
+        "audio": "dts2_fem_soy_paula.mp3"
+      },
+      {
+        "category": "Yo",
+        "about": "Paula",
+        "sentence": "Soy una chica",
+        "audio": "dts2_fem_soy_una_chica.mp3"
+      },
+      {
+        "category": "Yo",
+        "about": "Paula",
+        "sentence": "Soy alta",
+        "audio": "dts2_fem_soy_alta.mp3"
+      },
+      {
+        "category": "Tú",
+        "about": "Lez",
+        "sentence": "Eres rico",
+        "audio": "dts2_male_eres_rico.mp3"
+      },
+      {
+        "category": "Tú",
+        "about": "Lez",
+        "sentence": "Eres un chico",
+        "audio": "dts2_male_eres_un_chico.mp3"
+      },
+      {
+        "category": "Tú",
+        "about": "Lez",
+        "sentence": "Eres Lez",
+        "audio": "dts2_male_eres_lez.mp3"
+      },
+      {
+        "category": "Tú",
+        "about": "Lez",
+        "sentence": "Lez, eres un chico",
+        "audio": "dts2_male_lez_eres_un_chico.mp3"
+      },
+      {
+        "category": "Tú",
+        "about": "Lez",
+        "sentence": "Lez, eres rico.",
+        "audio": "dts2_male_lez_eres_rico.mp3"
+      },
+      {
+        "category": "Él/Ella",
+        "about": "Lez",
+        "sentence": "Lez es un chico",
+        "audio": "dts2_male_lez_es_un_chico.mp3"
+      },
+      {
+        "category": "Él/Ella",
+        "about": "Lez",
+        "sentence": "Lez es rico",
+        "audio": "dts2_male_lez_es_rico.mp3"
+      },
+      {
+        "category": "Él/Ella",
+        "about": "Lez",
+        "sentence": "Un chico es Lez",
+        "audio": "dts2_male_un_chico_es_lez.mp3"
+      },
+      {
+        "category": "Tú",
+        "about": "Harry",
+        "sentence": "Eres pequeño",
+        "audio": "dts2_male_eres_pequeno.mp3"
+      },
+      {
+        "category": "Tú",
+        "about": "Harry",
+        "sentence": "Eres un elefante",
+        "audio": "dts2_male_eres_un_elefante.mp3"
+      },
+      {
+        "category": "Tú",
+        "about": "Harry",
+        "sentence": "Eres Harry",
+        "audio": "dts2_male_eres_harry.mp3"
+      },
+      {
+        "category": "Tú",
+        "about": "Harry",
+        "sentence": "Harry, eres un elefante",
+        "audio": "dts2_male_harry_eres_un_elefante.mp3"
+      },
+      {
+        "category": "Tú",
+        "about": "Harry",
+        "sentence": "Harry, eres pequeño",
+        "audio": "dts2_male_harry_eres_pequeno.mp3"
+      },
+      {
+        "category": "Él/Ella",
+        "about": "Harry",
+        "sentence": "Harry es un elefante",
+        "audio": "dts2_male_harry_es_un_elefante.mp3"
+      },
+      {
+        "category": "Él/Ella",
+        "about": "Harry",
+        "sentence": "Harry es pequeño",
+        "audio": "dts2_male_harry_es_pequeno.mp3"
+      },
+      {
+        "category": "Él/Ella",
+        "about": "Harry",
+        "sentence": "Un elefante es Harry",
+        "audio": "dts2_male_un_elefante_es_harry.mp3"
+      },
+      {
+        "category": "Tú",
+        "about": "Clifford",
+        "sentence": "Eres grande",
+        "audio": "dts2_male_eres_grande.mp3"
+      },
+      {
+        "category": "Tú",
+        "about": "Clifford",
+        "sentence": "Eres un perro",
+        "audio": "dts2_male_eres_un_perro.mp3"
+      },
+      {
+        "category": "Tú",
+        "about": "Clifford",
+        "sentence": "Eres Clifford",
+        "audio": "dts2_male_eres_clifford.mp3"
+      },
+      {
+        "category": "Tú",
+        "about": "Clifford",
+        "sentence": "Clifford, eres un perro",
+        "audio": "dts2_male_clifford_eres_un_perro.mp3"
+      },
+      {
+        "category": "Tú",
+        "about": "Clifford",
+        "sentence": "Clifford, eres grande",
+        "audio": "dts2_male_clifford_eres_grande.mp3"
+      },
+      {
+        "category": "Él/Ella",
+        "about": "Clifford",
+        "sentence": "Un perro es grande",
+        "audio": "dts2_male_un_perro_es_grande.mp3"
+      }
+    ],
+    "Harry": [
+      {
+        "category": "Yo",
+        "about": "Harry",
+        "sentence": "Soy Harry",
+        "audio": "dts2_male_soy_harry.mp3"
+      },
+      {
+        "category": "Yo",
+        "about": "Harry",
+        "sentence": "Soy un elefante",
+        "audio": "dts2_male_soy_un_elefante.mp3"
+      },
+      {
+        "category": "Yo",
+        "about": "Harry",
+        "sentence": "Soy pequeño",
+        "audio": "dts2_male_soy_pequeno.mp3"
+      },
+      {
+        "category": "Tú",
+        "about": "Paula",
+        "sentence": "Eres alta",
+        "audio": "dts2_male_eres_alta.mp3"
+      },
+      {
+        "category": "Tú",
+        "about": "Paula",
+        "sentence": "Eres Paula",
+        "audio": "dts2_male_eres_paula.mp3"
+      },
+      {
+        "category": "Tú",
+        "about": "Paula",
+        "sentence": "Paula, eres una chica",
+        "audio": "dts2_male_paula_eres_una_chica.mp3"
+      },
+      {
+        "category": "Tú",
+        "about": "Paula",
+        "sentence": "Paula, eres alta",
+        "audio": "dts2_male_paula_eres_alta.mp3"
+      },
+      {
+        "category": "Él/Ella",
+        "about": "Paula",
+        "sentence": "Paula es alta",
+        "audio": "dts2_male_paula_es_alta.mp3"
+      },
+      {
+        "category": "Él/Ella",
+        "about": "Paula",
+        "sentence": "Una chica es Paula",
+        "audio": "dts2_male_una_chica_es_paula.mp3"
+      },
+      {
+        "category": "Tú",
+        "about": "Lez",
+        "sentence": "Eres rico",
+        "audio": "dts2_male_eres_rico.mp3"
+      },
+      {
+        "category": "Tú",
+        "about": "Lez",
+        "sentence": "Eres un chico",
+        "audio": "dts2_male_eres_un_chico.mp3"
+      },
+      {
+        "category": "Tú",
+        "about": "Lez",
+        "sentence": "Eres Lez",
+        "audio": "dts2_male_eres_lez.mp3"
+      },
+      {
+        "category": "Tú",
+        "about": "Lez",
+        "sentence": "Lez, eres un chico",
+        "audio": "dts2_male_lez_eres_un_chico.mp3"
+      },
+      {
+        "category": "Tú",
+        "about": "Lez",
+        "sentence": "Lez, eres rico",
+        "audio": "dts2_male_lez_eres_rico.mp3"
+      },
+      {
+        "category": "Él/Ella",
+        "about": "Lez",
+        "sentence": "Lez es un chico",
+        "audio": "dts2_male_lez_es_un_chico.mp3"
+      },
+      {
+        "category": "Él/Ella",
+        "about": "Lez",
+        "sentence": "Lez es rico",
+        "audio": "dts2_male_lez_es_rico.mp3"
+      },
+      {
+        "category": "Él/Ella",
+        "about": "Lez",
+        "sentence": "Un chico es Lez",
+        "audio": "dts2_male_un_chico_es_lez.mp3"
+      },
+      {
+        "category": "Tú",
+        "about": "Clifford",
+        "sentence": "Eres grande",
+        "audio": "dts2_male_eres_grande.mp3"
+      },
+      {
+        "category": "Tú",
+        "about": "Clifford",
+        "sentence": "Eres un perro",
+        "audio": "dts2_male_eres_un_perro.mp3"
+      },
+      {
+        "category": "Tú",
+        "about": "Clifford",
+        "sentence": "Eres Clifford",
+        "audio": "dts2_male_eres_clifford.mp3"
+      },
+      {
+        "category": "Tú",
+        "about": "Clifford",
+        "sentence": "Clifford, eres un perro",
+        "audio": "dts2_male_clifford_eres_un_perro.mp3"
+      },
+      {
+        "category": "Tú",
+        "about": "Clifford",
+        "sentence": "Clifford, eres grande",
+        "audio": "dts2_male_clifford_eres_grande.mp3"
+      },
+      {
+        "category": "Él/Ella",
+        "about": "Clifford",
+        "sentence": "Un perro es grande",
+        "audio": "dts2_male_un_perro_es_grande.mp3"
+      }
+    ],
+    "Lez": [
+      {
+        "category": "Yo",
+        "about": "Lez",
+        "sentence": "Soy Lez",
+        "audio": "dts2_male_soy_lez.mp3"
+      },
+      {
+        "category": "Yo",
+        "about": "Lez",
+        "sentence": "Soy un chico",
+        "audio": "dts2_male_soy_un_chico.mp3"
+      },
+      {
+        "category": "Yo",
+        "about": "Lez",
+        "sentence": "Soy rico",
+        "audio": "dts2_male_soy_rico.mp3"
+      },
+      {
+        "category": "Tú",
+        "about": "Paula",
+        "sentence": "Eres alta",
+        "audio": "dts2_male_eres_alta.mp3"
+      },
+      {
+        "category": "Tú",
+        "about": "Paula",
+        "sentence": "Eres Paula",
+        "audio": "dts2_male_eres_paula.mp3"
+      },
+      {
+        "category": "Tú",
+        "about": "Paula",
+        "sentence": "Paula, eres una chica",
+        "audio": "dts2_male_paula_eres_una_chica.mp3"
+      },
+      {
+        "category": "Tú",
+        "about": "Paula",
+        "sentence": "Paula, eres alta",
+        "audio": "dts2_male_paula_eres_alta.mp3"
+      },
+      {
+        "category": "Él/Ella",
+        "about": "Paula",
+        "sentence": "Paula es alta",
+        "audio": "dts2_male_paula_es_alta.mp3"
+      },
+      {
+        "category": "Él/Ella",
+        "about": "Paula",
+        "sentence": "Una chica es Paula",
+        "audio": "dts2_male_una_chica_es_paula.mp3"
+      },
+      {
+        "category": "Tú",
+        "about": "Harry",
+        "sentence": "Eres pequeño",
+        "audio": "dts2_male_eres_pequeno.mp3"
+      },
+      {
+        "category": "Tú",
+        "about": "Harry",
+        "sentence": "Eres un elefante",
+        "audio": "dts2_male_eres_un_elefante.mp3"
+      },
+      {
+        "category": "Tú",
+        "about": "Harry",
+        "sentence": "Eres Harry",
+        "audio": "dts2_male_eres_harry.mp3"
+      },
+      {
+        "category": "Tú",
+        "about": "Harry",
+        "sentence": "Harry, eres un elefante",
+        "audio": "dts2_male_harry_eres_un_elefante.mp3"
+      },
+      {
+        "category": "Tú",
+        "about": "Harry",
+        "sentence": "Harry, eres pequeño",
+        "audio": "dts2_male_harry_eres_pequeno.mp3"
+      },
+      {
+        "category": "Él/Ella",
+        "about": "Harry",
+        "sentence": "Harry es un elefante",
+        "audio": "dts2_male_harry_es_un_elefante.mp3"
+      },
+      {
+        "category": "Él/Ella",
+        "about": "Harry",
+        "sentence": "Harry es pequeño",
+        "audio": "dts2_male_harry_es_pequeno.mp3"
+      },
+      {
+        "category": "Él/Ella",
+        "about": "Harry",
+        "sentence": "Un elefante es Harry",
+        "audio": "dts2_male_un_elefante_es_harry.mp3"
+      },
+      {
+        "category": "Tú",
+        "about": "Clifford",
+        "sentence": "Eres grande",
+        "audio": "dts2_male_eres_grande.mp3"
+      },
+      {
+        "category": "Tú",
+        "about": "Clifford",
+        "sentence": "Eres un perro",
+        "audio": "dts2_male_eres_un_perro.mp3"
+      },
+      {
+        "category": "Tú",
+        "about": "Clifford",
+        "sentence": "Eres Clifford",
+        "audio": "dts2_male_eres_clifford.mp3"
+      },
+      {
+        "category": "Tú",
+        "about": "Clifford",
+        "sentence": "Clifford, eres un perro",
+        "audio": "dts2_male_clifford_eres_un_perro.mp3"
+      },
+      {
+        "category": "Tú",
+        "about": "Clifford",
+        "sentence": "Clifford, eres grande",
+        "audio": "dts2_male_clifford_eres_grande.mp3"
+      },
+      {
+        "category": "Él/Ella",
+        "about": "Clifford",
+        "sentence": "Un perro es grande",
+        "audio": "dts2_male_un_perro_es_grande.mp3"
+      }
+    ],
+    "Clifford": [
+      {
+        "category": "Yo",
+        "about": "Clifford",
+        "sentence": "Soy Clifford",
+        "audio": "dts2_male_soy_clifford.mp3"
+      },
+      {
+        "category": "Yo",
+        "about": "Clifford",
+        "sentence": "Soy un perro",
+        "audio": "dts2_male_soy_un_perro.mp3"
+      },
+      {
+        "category": "Yo",
+        "about": "Clifford",
+        "sentence": "Soy grande",
+        "audio": "dts2_male_soy_grande.mp3"
+      },
+      {
+        "category": "Tú",
+        "about": "Paula",
+        "sentence": "Eres alta",
+        "audio": "dts2_male_eres_alta.mp3"
+      },
+      {
+        "category": "Tú",
+        "about": "Paula",
+        "sentence": "Eres Paula",
+        "audio": "dts2_male_eres_paula.mp3"
+      },
+      {
+        "category": "Tú",
+        "about": "Paula",
+        "sentence": "Paula, eres una chica",
+        "audio": "dts2_male_paula_eres_una_chica.mp3"
+      },
+      {
+        "category": "Tú",
+        "about": "Paula",
+        "sentence": "Paula, eres alta",
+        "audio": "dts2_male_paula_eres_alta.mp3"
+      },
+      {
+        "category": "Él/Ella",
+        "about": "Paula",
+        "sentence": "Paula es alta",
+        "audio": "dts2_male_paula_es_alta.mp3"
+      },
+      {
+        "category": "Él/Ella",
+        "about": "Paula",
+        "sentence": "Una chica es Paula",
+        "audio": "dts2_male_una_chica_es_paula.mp3"
+      },
+      {
+        "category": "Tú",
+        "about": "Harry",
+        "sentence": "Eres pequeño",
+        "audio": "dts2_male_eres_pequeno.mp3"
+      },
+      {
+        "category": "Tú",
+        "about": "Harry",
+        "sentence": "Eres un elefante",
+        "audio": "dts2_male_eres_un_elefante.mp3"
+      },
+      {
+        "category": "Tú",
+        "about": "Harry",
+        "sentence": "Eres Harry",
+        "audio": "dts2_male_eres_harry.mp3"
+      },
+      {
+        "category": "Tú",
+        "about": "Harry",
+        "sentence": "Harry, eres un elefante",
+        "audio": "dts2_male_harry_eres_un_elefante.mp3"
+      },
+      {
+        "category": "Tú",
+        "about": "Harry",
+        "sentence": "Harry, eres pequeño",
+        "audio": "dts2_male_harry_eres_pequeno.mp3"
+      },
+      {
+        "category": "Él/Ella",
+        "about": "Harry",
+        "sentence": "Harry es un elefante",
+        "audio": "dts2_male_harry_es_un_elefante.mp3"
+      },
+      {
+        "category": "Él/Ella",
+        "about": "Harry",
+        "sentence": "Harry es pequeño",
+        "audio": "dts2_male_harry_es_pequeno.mp3"
+      },
+      {
+        "category": "Él/Ella",
+        "about": "Harry",
+        "sentence": "Un elefante es Harry",
+        "audio": "dts2_male_un_elefante_es_harry.mp3"
+      },
+      {
+        "category": "Tú",
+        "about": "Lez",
+        "sentence": "Eres rico",
+        "audio": "dts2_male_eres_rico.mp3"
+      },
+      {
+        "category": "Tú",
+        "about": "Lez",
+        "sentence": "Eres un chico",
+        "audio": "dts2_male_eres_un_chico.mp3"
+      },
+      {
+        "category": "Tú",
+        "about": "Lez",
+        "sentence": "Eres Lez",
+        "audio": "dts2_male_eres_lez.mp3"
+      },
+      {
+        "category": "Tú",
+        "about": "Lez",
+        "sentence": "Lez, eres un chico",
+        "audio": "dts2_male_lez_eres_un_chico.mp3"
+      },
+      {
+        "category": "Tú",
+        "about": "Lez",
+        "sentence": "Lez, eres rico",
+        "audio": "dts2_male_lez_eres_rico.mp3"
+      },
+      {
+        "category": "Él/Ella",
+        "about": "Lez",
+        "sentence": "Lez es un chico",
+        "audio": "dts2_male_lez_es_un_chico.mp3"
+      },
+      {
+        "category": "Él/Ella",
+        "about": "Lez",
+        "sentence": "Lez es rico",
+        "audio": "dts2_male_lez_es_rico.mp3"
+      },
+      {
+        "category": "Él/Ella",
+        "about": "Lez",
+        "sentence": "Un chico es rico",
+        "audio": "dts2_male_un_chico_es_rico.mp3"
+      }
+    ]
+  }
+}

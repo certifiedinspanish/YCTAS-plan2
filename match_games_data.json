@@ -1,0 +1,163 @@
+{
+  "game1": {
+    "title": "Match the Words",
+    "pairs": [
+      {
+        "pairId": 0,
+        "spanish": "soy",
+        "english": "I am",
+        "audio": "dts2_word_soy.mp3",
+        "isNew": false
+      },
+      {
+        "pairId": 1,
+        "spanish": "eres",
+        "english": "you are",
+        "audio": "dts2_word_eres.mp3",
+        "isNew": false
+      },
+      {
+        "pairId": 2,
+        "spanish": "es",
+        "english": "is",
+        "audio": "dts2_word_es.mp3",
+        "isNew": false
+      },
+      {
+        "pairId": 3,
+        "spanish": "un",
+        "english": "a / an (masc.)",
+        "audio": "dts2_word_un.mp3",
+        "isNew": false
+      },
+      {
+        "pairId": 4,
+        "spanish": "una",
+        "english": "a / an (fem.)",
+        "audio": "dts2_word_una.mp3",
+        "isNew": false
+      },
+      {
+        "pairId": 5,
+        "spanish": "chica",
+        "english": "girl",
+        "audio": "dts2_word_chica.mp3",
+        "isNew": false
+      },
+      {
+        "pairId": 6,
+        "spanish": "chico",
+        "english": "boy",
+        "audio": "dts2_word_chico.mp3",
+        "isNew": false
+      },
+      {
+        "pairId": 7,
+        "spanish": "alta",
+        "english": "tall",
+        "audio": "dts2_word_alta.mp3",
+        "isNew": false
+      },
+      {
+        "pairId": 8,
+        "spanish": "rico",
+        "english": "rich",
+        "audio": "dts2_word_rico.mp3",
+        "isNew": false
+      },
+      {
+        "pairId": 9,
+        "spanish": "pequeño",
+        "english": "small",
+        "audio": "dts2_word_pequeno.mp3",
+        "isNew": false
+      },
+      {
+        "pairId": 10,
+        "spanish": "grande",
+        "english": "big",
+        "audio": "dts2_word_grande.mp3",
+        "isNew": false
+      },
+      {
+        "pairId": 11,
+        "spanish": "elefante",
+        "english": "elephant",
+        "audio": "dts2_word_elefante.mp3",
+        "isNew": false
+      },
+      {
+        "pairId": 12,
+        "spanish": "perro",
+        "english": "dog",
+        "audio": "dts2_word_perro.mp3",
+        "isNew": false
+      },
+      {
+        "pairId": 13,
+        "spanish": "hay",
+        "english": "there is / there are",
+        "audio": "dts2_word_hay.mp3",
+        "isNew": true
+      },
+      {
+        "pairId": 14,
+        "spanish": "y",
+        "english": "and",
+        "audio": "dts2_word_y.mp3",
+        "isNew": true
+      },
+      {
+        "pairId": 15,
+        "spanish": "cuatro",
+        "english": "four",
+        "audio": "dts2_word_cuatro.mp3",
+        "isNew": true
+      },
+      {
+        "pairId": 16,
+        "spanish": "amigos",
+        "english": "friends",
+        "audio": "dts2_word_amigos.mp3",
+        "isNew": true
+      }
+    ]
+  },
+  "game2": {
+    "title": "Match the Friend",
+    "pairs": [
+      {
+        "pairId": 0,
+        "name": "Paula",
+        "img": "paula.png",
+        "nameAudio": "dts2_word_paula.mp3",
+        "descriptor": "una chica alta",
+        "descriptorAudio": "dts2_narr_una_chica_alta.mp3"
+      },
+      {
+        "pairId": 1,
+        "name": "Lez",
+        "img": "lez.png",
+        "nameAudio": "dts2_word_lez.mp3",
+        "descriptor": "un chico rico",
+        "descriptorAudio": "dts2_narr_un_chico_rico.mp3"
+      },
+      {
+        "pairId": 2,
+        "name": "Clifford",
+        "img": "clifford.png",
+        "nameAudio": "dts2_word_clifford.mp3",
+        "descriptor": "un perro grande",
+        "descriptorAudio": "dts2_narr_un_perro_grande.mp3"
+      },
+      {
+        "pairId": 3,
+        "name": "Harry",
+        "img": "harry.png",
+        "nameAudio": "dts2_word_harry.mp3",
+        "descriptor": "un elefante pequeño",
+        "descriptorAudio": "dts2_narr_un_elefante_pequeno.mp3"
+      }
+    ]
+  }
+}
