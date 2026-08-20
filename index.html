@@ -4,24 +4,18 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>YCTAS! — Hispanic Countries + 1 Territory</title>
-<link rel="manifest" href="manifest.json?v=46">
-<meta name="theme-color" content="#FF8A3D">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="YCTAS!">
-<link rel="apple-touch-icon" href="apple-touch-icon.png">
-<link rel="icon" href="icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Nunito+Sans:wght@400;600;700;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=46">
+<link rel="stylesheet" href="style.css?v=25">
 </head>
 <body>
 
 <div class="topnav">
   <span class="brand">YCTAS! · Plan 2</span>
-  <button class="backbtn hidden" id="backBtn">← Home</button>
+  <div class="topnav-right">
+    <button class="backbtn hidden" id="backBtn">← Home</button>
+  </div>
 </div>
 
 <!-- HOME -->
@@ -31,10 +25,6 @@
     <h1>Songs &amp; Practice</h1>
     <p>Pick a song to sing along, or head to practice to test what you know.</p>
   </div>
-  <div class="home-streak hidden" id="homeStreak">
-    <span class="flame-icon">🔥</span> <span id="homeStreakCount">0</span> day streak
-  </div>
-  <button class="quickplay-btn" id="quickPlayBtn">⚡ Quick Play</button>
   <div class="tiles">
     <div class="tile" data-goto="countries">
       <div class="icon">🎵</div>
@@ -52,6 +42,18 @@
       <img class="icon eg-tile-flag" src="eg_flag.png" alt="Flag of Equatorial Guinea">
       <div class="txt"><span class="tile-eyebrow">Spotlight Country</span><h2>Equatorial Guinea</h2><p>A quick look at a Spanish-speaking country beyond the songs</p></div>
     </div>
+    <div class="tile" data-goto="game1">
+      <div class="icon">🃏</div>
+      <div class="txt"><span class="tile-eyebrow">Match Game</span><h2>Match the Words</h2><p>Spanish and English vocabulary from Cuatro Amigos</p></div>
+    </div>
+    <div class="tile" data-goto="game2">
+      <div class="icon">🧑‍🤝‍🧑</div>
+      <div class="txt"><span class="tile-eyebrow">Match Game</span><h2>Match the Friend</h2><p>Match each character to who they are</p></div>
+    </div>
+    <div class="tile" data-goto="game3">
+      <div class="icon">🎭</div>
+      <div class="txt"><span class="tile-eyebrow">Role Play</span><h2>Cuatro Amigos</h2><p>Pick a character and tell the story from their point of view</p></div>
+    </div>
   </div>
   <!-- Internal version log (not visible to site visitors — for our own reference only):
        v9: game visible without scrolling, sticky nav, done-color fix
@@ -66,33 +68,15 @@
        v18: added the 4th home tile — Spotlight Country: Equatorial Guinea (flag, facts, real-geography map, 2 Did You Know cards, 4 tap-to-hear clips including the Ciudad de la Paz capital update with a Malabo footnote)
        v19: fixed the home tile's flag emoji rendering as "GQ" text on some phones (now uses the real flag image), and the spotlight title now shows the full official name to match what the audio clip actually says
        v20: reverted title back to the short "Guinea Ecuatorial" per decision; old long-form name audio deleted (unused); new short-form name audio installed and the 🔊 button re-enabled
-       v21: Song Order flags are now tap-to-hear — plays a short real clip from the actual Countries song at that country's own timestamp (reuses cues_countries.json, no new audio recorded), for both the shown sequence and the answer choices
-       v22: Song Order snippet playback now auto-pauses the reference song toggle if it was playing, so the two can never overlap
-       v23: new Sequence Game mode — same mechanic as Plan 1's verb Sequence Game (listen to 3 in a row, tiles shuffle, tap back in order), ported to countries using the real song audio via cues_countries.json; Easy/Challenge difficulty; practice-only retirement after 5 correct, separate from mastery
-       v24: real fix for the persistent Argentina/Chile map cropping — the map SVG's sizing relied on a fragile absolute-position + auto-width/height CSS pattern known to be inconsistent on Android browsers; replaced with standard flexbox centering, which reliably preserves aspect ratio and full visibility across devices
-       v25: engagement pass — Add to Home Screen support (manifest + icons, opens like a real app), a home-screen "⚡ Quick Play" button that jumps straight into a random game mode with zero navigation, and the daily streak flame now shows right on the Home screen
-       v26: real fix for corrupted/truncated snippet audio (root cause: browser MP3 seeking isn't sample-accurate, so it was landing in the previous country's audio tail) — now uses 20 pre-sliced, sample-accurate clip files instead of runtime seeking; Song Order correct answers now count toward mastery, matching the progress bar that was already visible there; added clear on-screen instructions distinguishing "tap icon to preview" from "tap flag to answer"
-       v27: map geographic context layer — Brazil, Belize, Jamaica, Haiti, Guyana, Suriname, French Guiana, and The Bahamas now show as dashed, muted-gray borders (Brazil + United States labeled, others just bordered for orientation), plus Pacific/Atlantic/Caribbean labels; built from real geographic data (world-atlas), fitted to align with the existing map using known reference points; completely separate data/rendering path from the 20 interactive song countries, so it can never become clickable or affect any game; also shrank the audio player card and map so both fit on one phone screen together without scrolling
-       v28: real fix for still-truncated snippet clips — v26 removed browser seeking but two bugs remained: (1) tagged start times lagged slightly behind the true word onset (normal human tap-reaction delay), now compensated with a small lead-in buffer; (2) longer phrases like "La República Dominicana" were being cut off by an arbitrary 2-second cap even when much more room was available, now uses the real gap to the next cue instead; added a tiny fade in/out to eliminate the audible click at cut points. Also added a partial backing layer to soften (not fully eliminate — flagged as still-open) two small border-seam gaps near Brazil
-       v29: TEMPORARY diagnostic alerts added to snippet playback (Song Order / Sequence Game silent-audio report — cause not yet found, needs on-device error info) — remove once resolved. Also: precisely patched the two real map gaps near Peru and above Uruguay using proper geometry analysis (not guesswork) — both fully closed now
-       v30: TEMPORARY — added an entry-point alert plus a "no clip found" alert, since v29's alerts never fired (no sound, no popup) — this narrows down whether the tap is even reaching the playback code at all
-       v31: TEMPORARY — consolidated into a single, complete diagnostic alert (key, src found, total clips loaded, cuesCountries status) to minimize back-and-forth rounds
-       v32: found it — the diagnostic alert() itself was blocking playback (it pauses execution until dismissed, which breaks the browser's link between the tap and the play() call, silently killing audio permission). Confirmed via the v31 alert that key/src/wiring were all correct all along. Removed all blocking alerts, call play() immediately with nothing in between it and the tap; added one tiny, non-blocking status line (not a popup) as a safety net in case anything's still off
-       v33: still no sound after v32 — stripped playSnippet down to match the exact minimal pattern already confirmed working on the Spotlight page's pronunciation buttons (pause/set src/play/catch, nothing else); removed the promise wrapper and onended/onerror handlers entirely; Sequence Game timing now uses a plain timer instead of depending on the 'ended' event
-       v34: now creates a brand-new Audio object on every single tap instead of reusing one shared element — removes any possibility of stale state from a previous play attempt breaking the next one. Also fixed 3 leftover references to the old shared audio object that would have crashed the whole Practice screen
-       v35: ACTUAL root cause found and fixed — this was never a JavaScript/playback bug at all. Testing the raw clip files directly (bypassing the app) proved 19 of 20 clips were pure digital silence (-91dB), while Argentina had real signal. The v28 ffmpeg re-slicing applied a fade filter using a timestamp basis that didn't line up correctly for clips seeked away from the start of the source file. Fixed with a two-pass approach: trim first (clean, fresh 0-based timestamps), then apply fades on that already-short file. Every one of the 20 clips individually re-verified with real measured audio signal before shipping, not assumed
-       v36: hand-tuned remaining individual clip issues after direct file-by-file testing — Nicaragua/Panama boundary (was bleeding into each other), Colombia and El Salvador extended past a verse-shift marker to their real next-country boundary, Venezuela's clap-adjacent click eliminated by shifting the start point well forward and past the click's actual position (the click was in the original recording near that timestamp — no cut-point within a ~0.15s window avoided it, only jumping further did)
-       v37: Sequence Game removed from the mode picker (not deleted, just disabled/unreachable) — the mechanic is sound but it reused Song Order's snippet clips, which were cut for smooth flow within the song, not clear back-to-back standalone playback. Result was overlapping, distorted audio with no real feedback. Needs dedicated, separately-recorded audio (like Plan 1's) before being rebuilt — an asset problem, not a code problem. Song Order confirmed working well and stays
-       v38: Spain inset now shows Portugal and France as geographic context (dashed borders, labeled), same treatment as the Americas map — Spain was floating with no neighbors shown before. Built from real geographic data, calibrated to Spain's existing shape using its own bounding box (not guessed)
-       v39: France/Portugal labels made prominent and bold per design direction (fewer neighbors here than the Americas map, so no clutter problem — they can stand out clearly). Fixed three real bugs found along the way: Portugal's shape data included the Azores and Madeira (wildly wrong coordinates), the inset was too small on-screen (30px) for any label to be legible regardless of internal sizing, and Spain's own shape was silently covering part of the labels due to draw order
-       v40: offline support added (service worker) — the app now saves itself onto the device the first time it's opened with internet, and keeps fully working (songs, games, progress) with no connection after that. Cache is version-tied, same fix pattern used everywhere else, so a new upload always forces a fresh save instead of risking a stale offline copy
-       v41: offline not working — added real diagnostics instead of guessing again. Service worker now tries each file individually (a single failed file was silently breaking the whole all-or-nothing cache before) and reports exactly what succeeded/failed as an on-screen message
-       v42: Compare: People and Compare: Size now have tap-to-hear on both flags, reusing the same clean Countries-song clips — reinforces flag recognition during the games students already replay for win streaks. New Capitals Order mode added, mirroring Song Order but built from the Capitals song's own clips (country + capital spoken together, e.g. "Argentina, Buenos Aires") — all 20 clips individually verified, 3 needed hand-tuning (Argentina, Puerto Rico, La República Dominicana), same technique as the Countries clips
-       v43: "Song Order" renamed to "Countries Order" for naming parity with Capitals Order; Compare mode's browse-rankings list now also has tap-to-hear on every flag
-       v44: fixed offline caching gap you found — the fetch handler never actually saved newly-fetched files for later, so anything precaching missed on the first visit would need internet forever, matching exactly what you described. Also switched the first-visit save from one-file-at-a-time to all-at-once, much faster and less likely to get cut short partway through
-       v45: the offline status banner was disappearing in about half a second on phone, faster than the 6-second timer should have allowed — removed the timer entirely, banner now stays until manually dismissed with a ✕ button, so there's no race to read it
-       v46: the tap-to-hear icons on flags were only 18-20px, well under the ~44px minimum for a reliable touch target — near-misses were landing on the answer button underneath and counting as wrong answers. Enlarged to 30-34px across Countries/Capitals Order and Compare mode -->
-  <footer>YCTAS!™ · © 2026 The Spanish Fluency Centre</footer>
+       v21: added optional login/accounts (Firebase) so progress can follow a learner across their own devices — fully optional, app works identically with no login; added a "Questions? Contact us" form (never shows the real support email)
+       v22: fixed a bug where Country → Capital and Capital → Country would silently do nothing on some devices — caused by older saved progress on that browser missing an entry for a country; now self-heals automatically
+       v23: added a bouncing "more below" hint that appears whenever the flags/progress section is scrolled out of view (common on laptop browser windows, which show less vertical space than a phone) — taps to jump straight down to it
+       v24: Contact form now actually emails info@thespanishfluencycentre.com (via Formspree) instead of only silently saving to the database with no notification; the "message sent" confirmation now stays on screen long enough to actually read (was 1.4s, now 4s)
+       v25: added Story Practice (DTS) pilot — a short 3-character story ("What do they like?") combining word-order building, verb-form select, and matching, with a 5th home tile; roles (I/you/he-she) reshuffle randomly each playthrough across all 3 characters; audio and character images for this pilot are placeholders and still need to be generated/uploaded before it works fully
+       v26: replaced the abandoned Story Practice pilot entirely with the real DTS role-play game — "Cuatro Amigos" (Paula, Lez, Clifford, Harry). User picks a character, then freely builds sentences from a shared 17-word bank (tapping any word plays it immediately). ABCD rules enforced automatically: Yo only about yourself, Tú locks onto whichever character your first "tú" sentence turns out to be about, Él/Ella always names who it's about. Guided mode visually narrows the word bank once "tú" is locked; Challenge mode keeps everything open and just buzzes on a wrong-character attempt. Small collapsible "ser?" reference tab stays on screen the whole time. Per-character progress bar. Word/sentence audio and character images are still placeholders — needs the recordings + paula.png/lez.png/clifford.png/harry.png uploaded before it's fully live
+       v27: added Game 1 ("Match the Words" — 17-pair Spanish/English vocabulary flip-tile match) and Game 2 ("Match the Friend" — 4-pair character-to-identity flip-tile match, e.g. Paula ↔ "una chica modelo"), both built on one shared, reusable match-tile engine (same flip-two-tiles-check-for-a-pair mechanic Plan 1's Match Game already uses). Game 1 reuses 13 already-recorded word-button clips plus needs 4 new ones (hay, y, cuatro, amigos). Game 2 reuses the 4 already-recorded character-name clips plus needs 4 new narrator-voice phrase clips (una chica modelo / un chico rico / un perro grande / un elefante pequeño). 2 new home tiles added. -->
+
+  <footer>YCTAS!™ · © 2026 The Spanish Fluency Centre · <a href="#" id="contactLink" class="contact-link">Questions? Contact us</a></footer>
 </section>
 
 <!-- COUNTRIES SONG -->
@@ -115,9 +99,33 @@
   <div id="spotlightRoot"></div>
 </section>
 
-<script src="songplayer.js?v=46"></script>
-<script src="tester.js?v=46"></script>
-<script src="eg.js?v=46"></script>
-<script src="app.js?v=46"></script>
+<!-- GAME 1: Match the Words (vocabulary) -->
+<section id="view-game1" class="wrap hidden">
+  <div id="game1Root"></div>
+</section>
+
+<!-- GAME 2: Match the Friend (character <-> identity) -->
+<section id="view-game2" class="wrap hidden">
+  <div id="game2Root"></div>
+</section>
+
+<!-- CUATRO AMIGOS ROLE PLAY (DTS Game 3) -->
+<section id="view-game3" class="wrap hidden">
+  <div id="game3Root"></div>
+</section>
+
+<!-- Firebase — powers the optional login/account sync. If these fail to
+     load (offline, blocked network, etc.), auth.js detects that and the
+     rest of the app keeps working with zero login exactly as before. -->
+<script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-firestore-compat.js"></script>
+<script src="auth.js?v=27"></script>
+<script src="songplayer.js?v=27"></script>
+<script src="tester.js?v=27"></script>
+<script src="eg.js?v=27"></script>
+<script src="match_games.js?v=27"></script>
+<script src="game3.js?v=27"></script>
+<script src="app.js?v=27"></script>
 </body>
 </html>

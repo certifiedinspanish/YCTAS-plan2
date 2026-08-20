@@ -4,65 +4,18 @@ async function loadJSON(path){
   return res.json();
 }
 
-// Offline support: saves the app onto the device after the first visit with
-// internet, so it keeps working (songs, games, progress) with no connection
-// after that. Fails silently on older browsers that don't support this —
-// the app just works online-only there, same as before.
-if('serviceWorker' in navigator){
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('sw.js').catch((err) => {
-      showSwStatus('Offline setup failed to register: ' + err.message);
-    });
-  });
-  navigator.serviceWorker.addEventListener('message', (event) => {
-    if(event.data && event.data.type === 'sw-cache-report'){
-      const { total, failedCount, failed } = event.data;
-      if(failedCount === 0){
-        showSwStatus('✓ Offline ready — all ' + total + ' files saved for offline use.');
-      } else {
-        showSwStatus('⚠ Offline setup incomplete: ' + failedCount + ' of ' + total + ' files failed —\n' + failed.join('\n'));
-      }
-    }
-  });
-}
-function showSwStatus(msg){
-  let el = document.getElementById('swStatus');
-  if(!el){
-    el = document.createElement('div');
-    el.id = 'swStatus';
-    el.style.cssText = 'position:fixed;bottom:8px;left:8px;right:8px;background:#1B3B6F;color:#fff;' +
-      'font-size:11px;padding:8px 10px;border-radius:8px;z-index:999;white-space:pre-wrap;max-height:40vh;overflow:auto;' +
-      'display:flex;align-items:flex-start;gap:8px;';
-    const text = document.createElement('span');
-    text.id = 'swStatusText';
-    text.style.cssText = 'flex:1;';
-    const closeBtn = document.createElement('button');
-    closeBtn.textContent = '✕';
-    closeBtn.setAttribute('aria-label', 'Dismiss');
-    closeBtn.style.cssText = 'background:none;border:none;color:#fff;font-size:14px;cursor:pointer;flex-shrink:0;padding:0 2px;';
-    closeBtn.addEventListener('click', () => el.remove());
-    el.appendChild(text);
-    el.appendChild(closeBtn);
-    document.body.appendChild(el);
-  }
-  // No timer here on purpose — a fixed delay can't account for how fast any
-  // given phone actually renders/registers this, so it was disappearing
-  // before it could even be read. Stays until manually dismissed instead.
-  document.getElementById('swStatusText').textContent = msg;
-}
-
 async function main(){
   // Load all shared data once. Flags are referenced by relative path (not
   // embedded), same as the audio files — this only works when served over
   // http/https (e.g. GitHub Pages), not when double-clicking index.html
   // directly from disk, since browsers block fetch() on file:// URLs.
   const [countries, cuesCountries, cuesCapitals, mapData, compareData, egData] = await Promise.all([
-    loadJSON('countries.json?v=46'),
-    loadJSON('cues_countries.json?v=46'),
-    loadJSON('cues_capitals.json?v=46'),
-    loadJSON('map.json?v=46'),
-    loadJSON('compare.json?v=46'),
-    loadJSON('eg_data.json?v=46'),
+    loadJSON('countries.json?v=24'),
+    loadJSON('cues_countries.json?v=24'),
+    loadJSON('cues_capitals.json?v=24'),
+    loadJSON('map.json?v=24'),
+    loadJSON('compare.json?v=24'),
+    loadJSON('eg_data.json?v=24'),
   ]);
 
   const byKey = {};
@@ -78,6 +31,12 @@ async function main(){
   let practiceBuilt = false;
   let spotlightInstance = null;
   let spotlightBuilt = false;
+  let game3Instance = null;
+  let game3Built = false;
+  let game1Instance = null;
+  let game1Built = false;
+  let game2Instance = null;
+  let game2Built = false;
 
   const views = {
     home: document.getElementById('view-home'),
@@ -85,33 +44,17 @@ async function main(){
     capitals: document.getElementById('view-capitals'),
     practice: document.getElementById('view-practice'),
     spotlight: document.getElementById('view-spotlight'),
+    game3: document.getElementById('view-game3'),
+    game1: document.getElementById('view-game1'),
+    game2: document.getElementById('view-game2'),
   };
   const backBtn = document.getElementById('backBtn');
-
-  // Reads the same daily-streak data Practice already tracks, so it's
-  // visible the moment the app opens — no need to dig into Practice first.
-  function renderHomeStreak(){
-    let streak = null;
-    try{
-      const raw = localStorage.getItem('yctas_plan2_dailystreak_v1');
-      if(raw) streak = JSON.parse(raw);
-    }catch(e){}
-    const wrap = document.getElementById('homeStreak');
-    const countEl = document.getElementById('homeStreakCount');
-    if(streak && streak.current > 0){
-      countEl.textContent = streak.current;
-      wrap.classList.remove('hidden');
-    } else {
-      wrap.classList.add('hidden');
-    }
-  }
 
   function showView(name){
     Object.entries(views).forEach(([key, node]) => {
       node.classList.toggle('hidden', key !== name);
     });
     backBtn.classList.toggle('hidden', name === 'home');
-    if(name === 'home') renderHomeStreak();
 
     // Pause whichever song player isn't currently visible, so audio
     // doesn't keep playing silently in the background after navigating away.
@@ -119,6 +62,9 @@ async function main(){
     if(name !== 'capitals' && capitalsPlayer) capitalsPlayer.pause();
     if(name !== 'practice' && practiceInstance) practiceInstance.pause();
     if(name !== 'spotlight' && spotlightInstance) spotlightInstance.pause();
+    if(name !== 'game3' && game3Instance) game3Instance.pause();
+    if(name !== 'game1' && game1Instance) game1Instance.pause();
+    if(name !== 'game2' && game2Instance) game2Instance.pause();
 
     if(name === 'countries' && !countriesPlayer){
       countriesPlayer = createSongPlayer({
@@ -144,7 +90,6 @@ async function main(){
         countries, flags, compareData,
         countriesAudioSrc: 'countries_song.mp3',
         capitalsAudioSrc: 'capitals_song.mp3',
-        cuesCountries, cuesCapitals,
       });
       practiceBuilt = true;
     }
@@ -155,17 +100,35 @@ async function main(){
       });
       spotlightBuilt = true;
     }
+    if(name === 'game3' && !game3Built){
+      game3Instance = createGame3({
+        container: document.getElementById('game3Root'),
+        dataSrc: 'game3_data.json?v=27',
+      });
+      game3Built = true;
+    }
+    if(name === 'game1' && !game1Built){
+      game1Instance = createMatchGame({
+        container: document.getElementById('game1Root'),
+        dataSrc: 'match_games_data.json?v=27',
+        gameKey: 'game1',
+      });
+      game1Built = true;
+    }
+    if(name === 'game2' && !game2Built){
+      game2Instance = createMatchGame({
+        container: document.getElementById('game2Root'),
+        dataSrc: 'match_games_data.json?v=27',
+        gameKey: 'game2',
+      });
+      game2Built = true;
+    }
 
     window.scrollTo(0, 0);
   }
 
   document.querySelectorAll('[data-goto]').forEach(tile => {
     tile.addEventListener('click', () => goToView(tile.dataset.goto));
-  });
-  // One tap, straight into a random game — no mode-picking required.
-  document.getElementById('quickPlayBtn').addEventListener('click', () => {
-    goToView('practice');
-    if(practiceInstance) practiceInstance.quickPlay();
   });
   // Both the Home button and the phone's own back arrow now do the same
   // thing: step back to Home inside the app, instead of the back arrow
