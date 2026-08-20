@@ -18,24 +18,37 @@ if('serviceWorker' in navigator){
     if(event.data && event.data.type === 'sw-cache-report'){
       const { total, failedCount, failed } = event.data;
       if(failedCount === 0){
-        showSwStatus('✓ Offline ready — all ' + total + ' files saved for offline use.', true);
+        showSwStatus('✓ Offline ready — all ' + total + ' files saved for offline use.');
       } else {
         showSwStatus('⚠ Offline setup incomplete: ' + failedCount + ' of ' + total + ' files failed —\n' + failed.join('\n'));
       }
     }
   });
 }
-function showSwStatus(msg, autoHide){
+function showSwStatus(msg){
   let el = document.getElementById('swStatus');
   if(!el){
     el = document.createElement('div');
     el.id = 'swStatus';
     el.style.cssText = 'position:fixed;bottom:8px;left:8px;right:8px;background:#1B3B6F;color:#fff;' +
-      'font-size:11px;padding:8px 10px;border-radius:8px;z-index:999;white-space:pre-wrap;max-height:40vh;overflow:auto;';
+      'font-size:11px;padding:8px 10px;border-radius:8px;z-index:999;white-space:pre-wrap;max-height:40vh;overflow:auto;' +
+      'display:flex;align-items:flex-start;gap:8px;';
+    const text = document.createElement('span');
+    text.id = 'swStatusText';
+    text.style.cssText = 'flex:1;';
+    const closeBtn = document.createElement('button');
+    closeBtn.textContent = '✕';
+    closeBtn.setAttribute('aria-label', 'Dismiss');
+    closeBtn.style.cssText = 'background:none;border:none;color:#fff;font-size:14px;cursor:pointer;flex-shrink:0;padding:0 2px;';
+    closeBtn.addEventListener('click', () => el.remove());
+    el.appendChild(text);
+    el.appendChild(closeBtn);
     document.body.appendChild(el);
   }
-  el.textContent = msg;
-  if(autoHide) setTimeout(() => el.remove(), 6000);
+  // No timer here on purpose — a fixed delay can't account for how fast any
+  // given phone actually renders/registers this, so it was disappearing
+  // before it could even be read. Stays until manually dismissed instead.
+  document.getElementById('swStatusText').textContent = msg;
 }
 
 async function main(){
@@ -44,12 +57,12 @@ async function main(){
   // http/https (e.g. GitHub Pages), not when double-clicking index.html
   // directly from disk, since browsers block fetch() on file:// URLs.
   const [countries, cuesCountries, cuesCapitals, mapData, compareData, egData] = await Promise.all([
-    loadJSON('countries.json?v=44'),
-    loadJSON('cues_countries.json?v=44'),
-    loadJSON('cues_capitals.json?v=44'),
-    loadJSON('map.json?v=44'),
-    loadJSON('compare.json?v=44'),
-    loadJSON('eg_data.json?v=44'),
+    loadJSON('countries.json?v=46'),
+    loadJSON('cues_countries.json?v=46'),
+    loadJSON('cues_capitals.json?v=46'),
+    loadJSON('map.json?v=46'),
+    loadJSON('compare.json?v=46'),
+    loadJSON('eg_data.json?v=46'),
   ]);
 
   const byKey = {};

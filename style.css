@@ -295,19 +295,19 @@ body{
 /* Song Order: tap-to-hear flags, reusing the real song's own timestamps */
 .seq-flag-btn{
   position:relative;padding:0;border:none;background:transparent;cursor:pointer;
-  width:54px;height:38px;border-radius:6px;overflow:visible;
+  width:58px;height:42px;border-radius:6px;overflow:visible;
 }
 .seq-flag-btn img{width:100%;height:100%;object-fit:cover;border-radius:6px;display:block;}
 .seq-flag-hear{
-  position:absolute;bottom:-6px;right:-6px;background:var(--orange);color:#fff;
-  border-radius:50%;width:18px;height:18px;font-size:10px;
-  display:flex;align-items:center;justify-content:center;box-shadow:0 2px 5px rgba(27,42,74,0.3);
+  position:absolute;bottom:-10px;right:-10px;background:var(--orange);color:#fff;
+  border-radius:50%;width:30px;height:30px;font-size:15px;
+  display:flex;align-items:center;justify-content:center;box-shadow:0 2px 6px rgba(27,42,74,0.35);
 }
 .choice-flag-wrap{position:relative;display:inline-block;}
 .choice-hear{
-  position:absolute;bottom:-6px;right:-6px;background:var(--orange);color:#fff;
-  border-radius:50%;width:20px;height:20px;font-size:11px;
-  display:flex;align-items:center;justify-content:center;box-shadow:0 2px 5px rgba(27,42,74,0.3);
+  position:absolute;bottom:-12px;right:-12px;background:var(--orange);color:#fff;
+  border-radius:50%;width:34px;height:34px;font-size:16px;
+  display:flex;align-items:center;justify-content:center;box-shadow:0 2px 6px rgba(27,42,74,0.35);
   cursor:pointer;
 }
 .feedback{margin-top:16px;font-weight:800;min-height:1.4em;}

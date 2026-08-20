@@ -1,14 +1,9 @@
 // YCTAS! Plan 2 — offline support (service worker)
-//
-// Saves a full copy of the app onto the device on the first online visit,
-// then works fully offline after that — songs, games, progress, everything.
-// CACHE_NAME is tied to the app's version, so every new version forces a
-// clean, fresh save instead of risking a stale offline copy.
-const CACHE_NAME = 'yctas-plan2-v44';
+const CACHE_NAME = 'yctas-plan2-v46';
 
 const FILES_TO_CACHE = [
   './',
-  'app.js?v=44',
+  'app.js?v=46',
   'apple-touch-icon.png',
   'argentina.png',
   'bolivia.png',
@@ -55,17 +50,17 @@ const FILES_TO_CACHE = [
   'clip_uruguay.mp3',
   'clip_venezuela.mp3',
   'colombia.png',
-  'compare.json?v=44',
+  'compare.json?v=46',
   'costa_rica.png',
-  'countries.json?v=44',
+  'countries.json?v=46',
   'countries_song.mp3',
   'cuba.png',
-  'cues_capitals.json?v=44',
-  'cues_countries.json?v=44',
+  'cues_capitals.json?v=46',
+  'cues_countries.json?v=46',
   'ecuador.png',
-  'eg.js?v=44',
+  'eg.js?v=46',
   'eg_capital.mp3',
-  'eg_data.json?v=44',
+  'eg_data.json?v=46',
   'eg_flag.png',
   'eg_gentilicio.mp3',
   'eg_malabo.mp3',
@@ -78,8 +73,8 @@ const FILES_TO_CACHE = [
   'icon-192.png',
   'icon-512.png',
   'index.html',
-  'manifest.json?v=44',
-  'map.json?v=44',
+  'manifest.json?v=46',
+  'map.json?v=46',
   'mexico.png',
   'nicaragua.png',
   'panama.png',
@@ -87,9 +82,9 @@ const FILES_TO_CACHE = [
   'peru.png',
   'puerto_rico.png',
   'republica_dominicana.png',
-  'songplayer.js?v=44',
-  'style.css?v=44',
-  'tester.js?v=44',
+  'songplayer.js?v=46',
+  'style.css?v=46',
+  'tester.js?v=46',
   'uruguay.png',
   'venezuela.png',
 ];
