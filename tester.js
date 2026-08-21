@@ -333,12 +333,12 @@ function createTester(opts) {
       row.style.cssText = 'display:flex;align-items:center;gap:10px;padding:8px 4px;border-bottom:1px solid var(--line);';
       row.innerHTML =
         '<span style="font-size:12px;color:var(--text-muted);width:18px;">' + (i+1) + '</span>' +
-        '<img src="' + flagSrc(c.key) + '" style="width:52px;height:36px;object-fit:cover;border-radius:6px;">' +
+        '<img src="' + flagSrc(c.key) + '" style="width:58px;height:42px;object-fit:cover;border-radius:8px;">' +
         '<span style="font-weight:700;">' + c.name + '</span>';
       const hearBtn = document.createElement('button');
       hearBtn.textContent = '🔊';
       hearBtn.setAttribute('aria-label', 'Hear ' + c.name);
-      hearBtn.style.cssText = 'background:none;border:none;font-size:26px;cursor:pointer;padding:2px 6px;';
+      hearBtn.style.cssText = 'background:none;border:none;font-size:32px;cursor:pointer;padding:2px 8px;';
       hearBtn.addEventListener('click', () => playSnippet(c.key));
       row.appendChild(hearBtn);
       if(mode === 'pop'){
