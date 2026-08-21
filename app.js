@@ -90,6 +90,7 @@ async function main(){
         countries, flags, compareData,
         countriesAudioSrc: 'countries_song.mp3',
         capitalsAudioSrc: 'capitals_song.mp3',
+        cuesCountries, cuesCapitals,
       });
       practiceBuilt = true;
     }

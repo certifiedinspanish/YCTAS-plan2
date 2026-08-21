@@ -1,5 +1,5 @@
 // YCTAS! Plan 2 — offline support (service worker)
-const CACHE_NAME = 'yctas-plan2-v50';
+const CACHE_NAME = 'yctas-plan2-v52';
 
 const FILES_TO_CACHE = [
   './',
