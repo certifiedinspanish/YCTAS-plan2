@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>YCTAS! — Hispanic Countries + 1 Territory</title>
-<link rel="manifest" href="manifest.json?v=49">
+<link rel="manifest" href="manifest.json?v=50">
 <meta name="theme-color" content="#FF8A3D">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -15,7 +15,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Nunito+Sans:wght@400;600;700;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=49">
+<link rel="stylesheet" href="style.css?v=50">
 </head>
 <body>
 
@@ -38,6 +38,11 @@
   </div>
   <button class="quickplay-btn" id="quickPlayBtn">⚡ Quick Play</button>
   <button class="offline-check-link" id="offlineCheckBtn">💾 Tap here to check offline status</button>
+  <button class="quickplay-btn hidden" id="installAppBtn" style="background:linear-gradient(135deg,#1B3B6F,#2FBE73);">📲 Install app on this device</button>
+  <div id="swStatus" class="hidden" style="max-width:340px;margin:10px auto 4px;background:#1B3B6F;color:#fff;font-size:12px;padding:10px 12px;border-radius:10px;white-space:pre-wrap;display:flex;align-items:flex-start;gap:8px;">
+    <span id="swStatusText" style="flex:1;"></span>
+    <button id="swStatusClose" aria-label="Dismiss" style="background:none;border:none;color:#fff;font-size:14px;cursor:pointer;flex-shrink:0;padding:0 2px;">✕</button>
+  </div>
   <div class="tiles">
     <div class="tile" data-goto="countries">
       <div class="icon">🎵</div>
@@ -119,7 +124,8 @@
        v46: the tap-to-hear icons on flags were only 18-20px, well under the ~44px minimum for a reliable touch target — near-misses were landing on the answer button underneath and counting as wrong answers. Enlarged to 30-34px across Countries/Capitals Order and Compare mode
        v47: 3 more Countries clips hand-corrected after a full re-listen — El Salvador (was catching Ecuador's tail), Peru (2 clicks, de-clicked), Venezuela (finally clean "Venezuela" without the "y" prefix and without the click, using de-click + a bigger forward shift). Also added a permanent "📶 Check offline status" link on Home — checks the real cache directly on demand instead of depending on catching a banner that was disappearing too fast on phone for an unconfirmed reason
        v48: EMERGENCY RESTORE — a separate, parallel editing thread overwrote style.css (and possibly other files) on the live repo, silently reverting the larger audio-icon sizing and breaking Countries/Capitals game audio entirely. This version restores the complete, verified-correct app from this thread's own working files, plus finally bundles the El Salvador and Venezuela clip fixes that were completed but never shipped. Going forward: this thread only, no parallel edits
-       v49: MERGE — properly combined this thread's work with the parallel thread's login/accounts feature, rather than one overwriting the other. Added: optional Firebase login (auth.js) letting progress follow a learner across their own devices, with proper two-way merge logic so signing in never loses progress on either side; a "Questions? Contact us" form (real support email never shown in the UI); a real bug fix for Country↔Capital silently breaking on incomplete saved progress; a bouncing "more below" scroll hint for laptop-width screens. Hand-merged into this thread's newer game modes and features (Countries/Capitals Order, Compare mode audio, offline support, bigger touch targets, map context layer) rather than reverting any of them -->
+       v49: MERGE — properly combined this thread's work with the parallel thread's login/accounts feature, rather than one overwriting the other. Added: optional Firebase login (auth.js) letting progress follow a learner across their own devices, with proper two-way merge logic so signing in never loses progress on either side; a "Questions? Contact us" form (real support email never shown in the UI); a real bug fix for Country↔Capital silently breaking on incomplete saved progress; a bouncing "more below" scroll hint for laptop-width screens. Hand-merged into this thread's newer game modes and features (Countries/Capitals Order, Compare mode audio, offline support, bigger touch targets, map context layer) rather than reverting any of them. Also includes DTS games (Match the Words / Match the Friend / Cuatro Amigos) merged in from a separate handoff, completely hidden (HTML-commented tiles, hidden game sections) — where DTS belongs long-term is still an open decision
+       v50: three real offline fixes after direct testing — (1) precaching was firing all 90 files as one giant simultaneous burst, overwhelming real mobile connections and leaving an inconsistent partial cache; now fetches in small batches of 6 with automatic retries; (2) added a native "📲 Install app" button using the browser's own install prompt, instead of relying on people finding a buried browser-menu option; (3) the offline-status panel used position:fixed, which caused two separate display bugs (vanishing too fast on phone, not showing at all on laptop) — rebuilt as a plain in-page element instead, removing that whole class of bug -->
   <footer>YCTAS!™ · © 2026 The Spanish Fluency Centre · <a href="#" id="contactLink" class="contact-link">Questions? Contact us</a></footer>
 </section>
 
@@ -149,12 +155,12 @@
 <script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-firestore-compat.js"></script>
-<script src="auth.js?v=49"></script>
-<script src="songplayer.js?v=49"></script>
-<script src="tester.js?v=49"></script>
-<script src="eg.js?v=49"></script>
+<script src="auth.js?v=50"></script>
+<script src="songplayer.js?v=50"></script>
+<script src="tester.js?v=50"></script>
+<script src="eg.js?v=50"></script>
 <script src="match_games.js"></script>
 <script src="game3.js"></script>
-<script src="app.js?v=49"></script>
+<script src="app.js?v=50"></script>
 </body>
 </html>

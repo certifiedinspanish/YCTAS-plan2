@@ -1,20 +1,18 @@
 // YCTAS! Plan 2 — offline support (service worker)
 //
-// Note on login/accounts (added in v49): the Firebase CDN scripts are NOT
-// precached here on purpose — they're cross-origin (gstatic.com), and the
-// login feature already degrades gracefully with no internet (auth.js
-// detects a missing Firebase SDK and disables accounts for that visit,
-// the rest of the app keeps working normally). Precaching third-party
+// Note on login/accounts: the Firebase CDN scripts are NOT precached here on
+// purpose — they're cross-origin (gstatic.com), and the login feature
+// already degrades gracefully with no internet. Precaching third-party
 // scripts adds real complexity for a feature that's fully optional by
-// design; not worth it unless offline login specifically becomes a need.
-const CACHE_NAME = 'yctas-plan2-v49-dts1';
+// design.
+const CACHE_NAME = 'yctas-plan2-v50';
 
 const FILES_TO_CACHE = [
   './',
-  'app.js?v=49',
+  'app.js?v=50',
   'apple-touch-icon.png',
   'argentina.png',
-  'auth.js?v=49',
+  'auth.js?v=50',
   'bolivia.png',
   'capitals_song.mp3',
   'chile.png',
@@ -59,17 +57,17 @@ const FILES_TO_CACHE = [
   'clip_uruguay.mp3',
   'clip_venezuela.mp3',
   'colombia.png',
-  'compare.json?v=49',
+  'compare.json?v=50',
   'costa_rica.png',
-  'countries.json?v=49',
+  'countries.json?v=50',
   'countries_song.mp3',
   'cuba.png',
-  'cues_capitals.json?v=49',
-  'cues_countries.json?v=49',
+  'cues_capitals.json?v=50',
+  'cues_countries.json?v=50',
   'ecuador.png',
-  'eg.js?v=49',
+  'eg.js?v=50',
   'eg_capital.mp3',
-  'eg_data.json?v=49',
+  'eg_data.json?v=50',
   'eg_flag.png',
   'eg_gentilicio.mp3',
   'eg_malabo.mp3',
@@ -77,13 +75,17 @@ const FILES_TO_CACHE = [
   'el_salvador.png',
   'equatorial_guinea.png',
   'espana.png',
+  'game3.js?v=50',
+  'game3_data.json?v=50',
   'guatemala.png',
   'honduras.png',
   'icon-192.png',
   'icon-512.png',
   'index.html',
-  'manifest.json?v=49',
-  'map.json?v=49',
+  'manifest.json?v=50',
+  'map.json?v=50',
+  'match_games.js?v=50',
+  'match_games_data.json?v=50',
   'mexico.png',
   'nicaragua.png',
   'panama.png',
@@ -91,35 +93,47 @@ const FILES_TO_CACHE = [
   'peru.png',
   'puerto_rico.png',
   'republica_dominicana.png',
-  'songplayer.js?v=49',
-  'style.css?v=49',
-  'tester.js?v=49',
+  'songplayer.js?v=50',
+  'style.css?v=50',
+  'tester.js?v=50',
   'uruguay.png',
   'venezuela.png',
-  'match_games.js',
-  'game3.js',
-  'match_games_data.json',
-  'game3_data.json',
-  'paula.png',
-  'lez.png',
-  'clifford.png',
-  'harry.png',
 ];
 
 self.addEventListener('install', (event) => {
   self.skipWaiting();
   event.waitUntil(
     caches.open(CACHE_NAME).then(async (cache) => {
+      // Fetching all files at once overwhelms a real mobile connection —
+      // the browser can only hold a handful of simultaneous connections per
+      // site, so most requests just queue up and some quietly stall before
+      // finishing. Fixed by fetching a small batch at a time, with
+      // automatic retries for anything that fails.
+      const BATCH_SIZE = 6;
+      const MAX_ATTEMPTS = 3;
       const failed = [];
-      await Promise.all(FILES_TO_CACHE.map(async (url) => {
-        try {
-          const res = await fetch(url);
-          if (!res.ok) { failed.push(url + ' (HTTP ' + res.status + ')'); return; }
-          await cache.put(url, res);
-        } catch (err) {
-          failed.push(url + ' (' + err.message + ')');
+
+      async function fetchOne(url){
+        for(let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++){
+          try {
+            const res = await fetch(url, { cache: 'no-store' });
+            if (!res.ok) throw new Error('HTTP ' + res.status);
+            await cache.put(url, res);
+            return true;
+          } catch (err) {
+            if(attempt === MAX_ATTEMPTS) return err.message;
+          }
         }
-      }));
+      }
+
+      for(let i = 0; i < FILES_TO_CACHE.length; i += BATCH_SIZE){
+        const batch = FILES_TO_CACHE.slice(i, i + BATCH_SIZE);
+        const results = await Promise.all(batch.map(fetchOne));
+        results.forEach((result, j) => {
+          if(result !== true) failed.push(batch[j] + ' (' + result + ')');
+        });
+      }
+
       const clients = await self.clients.matchAll();
       clients.forEach((c) => c.postMessage({
         type: 'sw-cache-report',
@@ -141,9 +155,6 @@ self.addEventListener('activate', (event) => {
 
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
-  // Don't intercept cross-origin requests (Firebase, Google Fonts, etc.) —
-  // let those go straight to the network/browser cache as normal. Only
-  // manage caching for this site's own files.
   if (new URL(event.request.url).origin !== location.origin) return;
   event.respondWith(
     caches.match(event.request).then((cached) => {

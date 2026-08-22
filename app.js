@@ -26,29 +26,16 @@ if('serviceWorker' in navigator){
   });
 }
 function showSwStatus(msg){
-  let el = document.getElementById('swStatus');
-  if(!el){
-    el = document.createElement('div');
-    el.id = 'swStatus';
-    el.style.cssText = 'position:fixed;bottom:8px;left:8px;right:8px;background:#1B3B6F;color:#fff;' +
-      'font-size:11px;padding:8px 10px;border-radius:8px;z-index:999;white-space:pre-wrap;max-height:40vh;overflow:auto;' +
-      'display:flex;align-items:flex-start;gap:8px;';
-    const text = document.createElement('span');
-    text.id = 'swStatusText';
-    text.style.cssText = 'flex:1;';
-    const closeBtn = document.createElement('button');
-    closeBtn.textContent = '✕';
-    closeBtn.setAttribute('aria-label', 'Dismiss');
-    closeBtn.style.cssText = 'background:none;border:none;color:#fff;font-size:14px;cursor:pointer;flex-shrink:0;padding:0 2px;';
-    closeBtn.addEventListener('click', () => el.remove());
-    el.appendChild(text);
-    el.appendChild(closeBtn);
-    document.body.appendChild(el);
-  }
-  // No timer here on purpose — a fixed delay can't account for how fast any
-  // given phone actually renders/registers this, so it was disappearing
-  // before it could even be read. Stays until manually dismissed instead.
-  document.getElementById('swStatusText').textContent = msg;
+  // A plain element sitting in the normal page flow, not floating —
+  // position:fixed had already caused two separate display problems
+  // (disappearing too fast on phone, not showing at all on laptop), most
+  // likely from some ancestor element changing how "fixed" gets anchored.
+  // This sidesteps that whole class of bug by never using fixed positioning.
+  const el = document.getElementById('swStatus');
+  const text = document.getElementById('swStatusText');
+  if(!el || !text) return;
+  text.textContent = msg;
+  el.classList.remove('hidden');
 }
 
 async function main(){
@@ -57,12 +44,12 @@ async function main(){
   // http/https (e.g. GitHub Pages), not when double-clicking index.html
   // directly from disk, since browsers block fetch() on file:// URLs.
   const [countries, cuesCountries, cuesCapitals, mapData, compareData, egData] = await Promise.all([
-    loadJSON('countries.json?v=49'),
-    loadJSON('cues_countries.json?v=49'),
-    loadJSON('cues_capitals.json?v=49'),
-    loadJSON('map.json?v=49'),
-    loadJSON('compare.json?v=49'),
-    loadJSON('eg_data.json?v=49'),
+    loadJSON('countries.json?v=50'),
+    loadJSON('cues_countries.json?v=50'),
+    loadJSON('cues_capitals.json?v=50'),
+    loadJSON('map.json?v=50'),
+    loadJSON('compare.json?v=50'),
+    loadJSON('eg_data.json?v=50'),
   ]);
 
   const byKey = {};
@@ -222,6 +209,34 @@ async function main(){
     }catch(err){
       showSwStatus('Could not check offline status: ' + err.message);
     }
+  });
+
+  // Native "Add to Home Screen" — Chrome/Android fires this event only when
+  // it decides the site qualifies (valid manifest + service worker). We
+  // hold onto that moment and offer a real button for it, instead of
+  // leaving people to hunt through a browser menu for it manually. Safari
+  // and some other browsers never fire this event at all — the button just
+  // stays hidden there, and the old manual-menu route is still the way in.
+  let deferredInstallPrompt = null;
+  const installBtn = document.getElementById('installAppBtn');
+  document.getElementById('swStatusClose').addEventListener('click', () => {
+    document.getElementById('swStatus').classList.add('hidden');
+  });
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredInstallPrompt = e;
+    installBtn.classList.remove('hidden');
+  });
+  installBtn.addEventListener('click', async () => {
+    if(!deferredInstallPrompt) return;
+    deferredInstallPrompt.prompt();
+    const { outcome } = await deferredInstallPrompt.userChoice;
+    deferredInstallPrompt = null;
+    installBtn.classList.add('hidden');
+    if(outcome === 'accepted') showSwStatus('✓ App installed! Look for its icon on your home screen.');
+  });
+  window.addEventListener('appinstalled', () => {
+    installBtn.classList.add('hidden');
   });
   // Both the Home button and the phone's own back arrow now do the same
   // thing: step back to Home inside the app, instead of the back arrow
