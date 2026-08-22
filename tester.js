@@ -9,6 +9,7 @@ function createTester(opts) {
       Get it right a few times, on a couple of different days, and you'll earn a ⭐ for that country — forever!
     </p>
     <div class="celebrate-toast" data-el="celebrateToast"></div>
+    <button class="scrollhint hidden" data-el="scrollHint">⬇ More below — your flags &amp; progress</button>
     <p style="text-align:center;font-size:10px;color:#ccc;margin:0 0 4px;" data-el="snippetDebug"></p>
 
     <div class="songref">
@@ -70,6 +71,15 @@ function createTester(opts) {
   const STORAGE_KEY = 'yctas_plan2_tester_v1';
   const STREAK_KEY = 'yctas_plan2_streaks_v1';
   const DAILY_STREAK_KEY = 'yctas_plan2_dailystreak_v1';
+  // If an account is logged in, every local save also gets queued up to sync
+  // to the cloud. If no one's logged in, YCTASAuth.pushProgress is a no-op —
+  // this is safe to call unconditionally and never breaks the no-login
+  // experience.
+  function cloudSync(){
+    if(window.YCTASAuth && window.YCTASAuth.isLoggedIn()){
+      window.YCTASAuth.pushProgress({ progress, streaks, dailyStreak });
+    }
+  }
 
   function yesterdayStr(){
     const d = new Date();
@@ -86,7 +96,7 @@ function createTester(opts) {
     }catch(e){}
     return { current: 0, lastDate: null };
   }
-  function saveDailyStreak(s){ try{ localStorage.setItem(DAILY_STREAK_KEY, JSON.stringify(s)); }catch(e){} }
+  function saveDailyStreak(s){ try{ localStorage.setItem(DAILY_STREAK_KEY, JSON.stringify(s)); }catch(e){} cloudSync(); }
   function renderDailyStreak(){
     el.dailyStreakCount.textContent = dailyStreak.current;
   }
@@ -188,7 +198,7 @@ function createTester(opts) {
     countries.forEach(c => p[c.key] = { correctDates: [] });
     return p;
   }
-  function saveProgress(p){ try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(p)); }catch(e){} }
+  function saveProgress(p){ try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(p)); }catch(e){} cloudSync(); }
   function isMastered(p, key){
     const rec = p[key];
     if(!rec) return false;
@@ -217,7 +227,7 @@ function createTester(opts) {
     }catch(e){}
     return { pop: { current: 0, best: 0 }, area: { current: 0, best: 0 } };
   }
-  function saveStreaks(s){ try{ localStorage.setItem(STREAK_KEY, JSON.stringify(s)); }catch(e){} }
+  function saveStreaks(s){ try{ localStorage.setItem(STREAK_KEY, JSON.stringify(s)); }catch(e){} cloudSync(); }
 
   let progress = loadProgress();
   let streaks = loadStreaks();
@@ -260,7 +270,11 @@ function createTester(opts) {
   function chooseTargetCountry(){
     const unmastered = countries.filter(c => !isMastered(progress, c.key));
     const pool = unmastered.length ? unmastered : countries;
-    pool.sort((a,b) => (progress[a.key].correctDates.length) - (progress[b.key].correctDates.length));
+    pool.sort((a,b) => {
+      const na = (progress[a.key] && progress[a.key].correctDates.length) || 0;
+      const nb = (progress[b.key] && progress[b.key].correctDates.length) || 0;
+      return na - nb;
+    });
     const topFew = pool.slice(0, Math.min(6, pool.length));
     return topFew[Math.floor(Math.random()*topFew.length)];
   }
@@ -333,12 +347,12 @@ function createTester(opts) {
       row.style.cssText = 'display:flex;align-items:center;gap:10px;padding:8px 4px;border-bottom:1px solid var(--line);';
       row.innerHTML =
         '<span style="font-size:12px;color:var(--text-muted);width:18px;">' + (i+1) + '</span>' +
-        '<img src="' + flagSrc(c.key) + '" style="width:58px;height:42px;object-fit:cover;border-radius:8px;">' +
+        '<img src="' + flagSrc(c.key) + '" style="width:38px;height:26px;object-fit:cover;border-radius:4px;">' +
         '<span style="font-weight:700;">' + c.name + '</span>';
       const hearBtn = document.createElement('button');
       hearBtn.textContent = '🔊';
       hearBtn.setAttribute('aria-label', 'Hear ' + c.name);
-      hearBtn.style.cssText = 'background:none;border:none;font-size:32px;cursor:pointer;padding:2px 8px;';
+      hearBtn.style.cssText = 'background:none;border:none;font-size:14px;cursor:pointer;padding:2px 4px;';
       hearBtn.addEventListener('click', () => playSnippet(c.key));
       row.appendChild(hearBtn);
       if(mode === 'pop'){
@@ -966,8 +980,40 @@ function createTester(opts) {
   renderDailyStreak();
   newQuestion();
 
+  // Scroll hint — on a wide/short window (like a laptop browser), the star
+  // grid at the bottom can end up out of view with nothing suggesting it's
+  // there. Show a small hint whenever it's scrolled out of sight; hide it
+  // the moment it's visible. Uses IntersectionObserver, the standard,
+  // built-in way browsers already detect scroll visibility.
+  if('IntersectionObserver' in window){
+    const hintObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        el.scrollHint.classList.toggle('hidden', entry.isIntersecting);
+      });
+    }, { threshold: 0.1 });
+    hintObserver.observe(el.starGrid);
+  }
+  el.scrollHint.addEventListener('click', () => {
+    el.starGrid.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  });
+
+  // If a login happens while this screen is already open (rare, but
+  // possible), reload everything fresh from localStorage — auth.js writes
+  // the merged result there — and re-render so nothing looks stale.
+  function refreshFromStorage(){
+    progress = loadProgress();
+    streaks = loadStreaks();
+    dailyStreak = loadDailyStreak();
+    renderProgress();
+    renderStreak();
+    renderDailyStreak();
+    newQuestion();
+  }
+  window.addEventListener('yctas:progressMerged', refreshFromStorage);
+
   return {
     pause: pauseReferenceAudio,
+    refresh: refreshFromStorage,
     quickPlay(){
       const modes = ['c2cap', 'cap2c', 'order', 'orderCap', 'pop', 'area'];
       const pick = modes[Math.floor(Math.random() * modes.length)];

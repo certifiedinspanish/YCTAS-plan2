@@ -1,11 +1,20 @@
 // YCTAS! Plan 2 — offline support (service worker)
-const CACHE_NAME = 'yctas-plan2-v52';
+//
+// Note on login/accounts (added in v49): the Firebase CDN scripts are NOT
+// precached here on purpose — they're cross-origin (gstatic.com), and the
+// login feature already degrades gracefully with no internet (auth.js
+// detects a missing Firebase SDK and disables accounts for that visit,
+// the rest of the app keeps working normally). Precaching third-party
+// scripts adds real complexity for a feature that's fully optional by
+// design; not worth it unless offline login specifically becomes a need.
+const CACHE_NAME = 'yctas-plan2-v49-dts1';
 
 const FILES_TO_CACHE = [
   './',
-  'app.js?v=46',
+  'app.js?v=49',
   'apple-touch-icon.png',
   'argentina.png',
+  'auth.js?v=49',
   'bolivia.png',
   'capitals_song.mp3',
   'chile.png',
@@ -50,17 +59,17 @@ const FILES_TO_CACHE = [
   'clip_uruguay.mp3',
   'clip_venezuela.mp3',
   'colombia.png',
-  'compare.json?v=46',
+  'compare.json?v=49',
   'costa_rica.png',
-  'countries.json?v=46',
+  'countries.json?v=49',
   'countries_song.mp3',
   'cuba.png',
-  'cues_capitals.json?v=46',
-  'cues_countries.json?v=46',
+  'cues_capitals.json?v=49',
+  'cues_countries.json?v=49',
   'ecuador.png',
-  'eg.js?v=46',
+  'eg.js?v=49',
   'eg_capital.mp3',
-  'eg_data.json?v=46',
+  'eg_data.json?v=49',
   'eg_flag.png',
   'eg_gentilicio.mp3',
   'eg_malabo.mp3',
@@ -73,8 +82,8 @@ const FILES_TO_CACHE = [
   'icon-192.png',
   'icon-512.png',
   'index.html',
-  'manifest.json?v=46',
-  'map.json?v=46',
+  'manifest.json?v=49',
+  'map.json?v=49',
   'mexico.png',
   'nicaragua.png',
   'panama.png',
@@ -82,15 +91,15 @@ const FILES_TO_CACHE = [
   'peru.png',
   'puerto_rico.png',
   'republica_dominicana.png',
-  'songplayer.js?v=46',
-  'style.css?v=46',
-  'tester.js?v=46',
+  'songplayer.js?v=49',
+  'style.css?v=49',
+  'tester.js?v=49',
   'uruguay.png',
   'venezuela.png',
-  'game3.js?v=27',
-  'game3_data.json?v=27',
-  'match_games.js?v=27',
-  'match_games_data.json?v=27',
+  'match_games.js',
+  'game3.js',
+  'match_games_data.json',
+  'game3_data.json',
   'paula.png',
   'lez.png',
   'clifford.png',
@@ -132,6 +141,10 @@ self.addEventListener('activate', (event) => {
 
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
+  // Don't intercept cross-origin requests (Firebase, Google Fonts, etc.) —
+  // let those go straight to the network/browser cache as normal. Only
+  // manage caching for this site's own files.
+  if (new URL(event.request.url).origin !== location.origin) return;
   event.respondWith(
     caches.match(event.request).then((cached) => {
       if(cached) return cached;
