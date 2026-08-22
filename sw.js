@@ -1,18 +1,12 @@
 // YCTAS! Plan 2 — offline support (service worker)
-//
-// Note on login/accounts: the Firebase CDN scripts are NOT precached here on
-// purpose — they're cross-origin (gstatic.com), and the login feature
-// already degrades gracefully with no internet. Precaching third-party
-// scripts adds real complexity for a feature that's fully optional by
-// design.
-const CACHE_NAME = 'yctas-plan2-v50';
+const CACHE_NAME = 'yctas-plan2-v51';
 
 const FILES_TO_CACHE = [
   './',
-  'app.js?v=50',
+  'app.js?v=51',
   'apple-touch-icon.png',
   'argentina.png',
-  'auth.js?v=50',
+  'auth.js?v=51',
   'bolivia.png',
   'capitals_song.mp3',
   'chile.png',
@@ -57,17 +51,17 @@ const FILES_TO_CACHE = [
   'clip_uruguay.mp3',
   'clip_venezuela.mp3',
   'colombia.png',
-  'compare.json?v=50',
+  'compare.json?v=51',
   'costa_rica.png',
-  'countries.json?v=50',
+  'countries.json?v=51',
   'countries_song.mp3',
   'cuba.png',
-  'cues_capitals.json?v=50',
-  'cues_countries.json?v=50',
+  'cues_capitals.json?v=51',
+  'cues_countries.json?v=51',
   'ecuador.png',
-  'eg.js?v=50',
+  'eg.js?v=51',
   'eg_capital.mp3',
-  'eg_data.json?v=50',
+  'eg_data.json?v=51',
   'eg_flag.png',
   'eg_gentilicio.mp3',
   'eg_malabo.mp3',
@@ -75,17 +69,17 @@ const FILES_TO_CACHE = [
   'el_salvador.png',
   'equatorial_guinea.png',
   'espana.png',
-  'game3.js?v=50',
-  'game3_data.json?v=50',
+  'game3.js?v=51',
+  'game3_data.json?v=51',
   'guatemala.png',
   'honduras.png',
   'icon-192.png',
   'icon-512.png',
   'index.html',
-  'manifest.json?v=50',
-  'map.json?v=50',
-  'match_games.js?v=50',
-  'match_games_data.json?v=50',
+  'manifest.json?v=51',
+  'map.json?v=51',
+  'match_games.js?v=51',
+  'match_games_data.json?v=51',
   'mexico.png',
   'nicaragua.png',
   'panama.png',
@@ -93,9 +87,9 @@ const FILES_TO_CACHE = [
   'peru.png',
   'puerto_rico.png',
   'republica_dominicana.png',
-  'songplayer.js?v=50',
-  'style.css?v=50',
-  'tester.js?v=50',
+  'songplayer.js?v=51',
+  'style.css?v=51',
+  'tester.js?v=51',
   'uruguay.png',
   'venezuela.png',
 ];
@@ -104,11 +98,6 @@ self.addEventListener('install', (event) => {
   self.skipWaiting();
   event.waitUntil(
     caches.open(CACHE_NAME).then(async (cache) => {
-      // Fetching all files at once overwhelms a real mobile connection —
-      // the browser can only hold a handful of simultaneous connections per
-      // site, so most requests just queue up and some quietly stall before
-      // finishing. Fixed by fetching a small batch at a time, with
-      // automatic retries for anything that fails.
       const BATCH_SIZE = 6;
       const MAX_ATTEMPTS = 3;
       const failed = [];
@@ -156,16 +145,50 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
   if (new URL(event.request.url).origin !== location.origin) return;
-  event.respondWith(
-    caches.match(event.request).then((cached) => {
-      if(cached) return cached;
-      return fetch(event.request).then((res) => {
+
+  const url = new URL(event.request.url);
+  const cacheKey = url.pathname + url.search;
+  const isAudio = /\.mp3(\?|$)/.test(url.pathname);
+
+  event.respondWith((async () => {
+    const cache = await caches.open(CACHE_NAME);
+    let cached = await cache.match(cacheKey);
+
+    if(!cached){
+      try {
+        const res = await fetch(url.origin + cacheKey, { cache: 'no-store' });
         if(res && res.ok){
-          const copy = res.clone();
-          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));
+          cache.put(cacheKey, res.clone());
+          cached = res;
+        } else {
+          return res;
         }
-        return res;
-      });
-    })
-  );
+      } catch (err) {
+        return new Response('', { status: 504 });
+      }
+    }
+
+    const rangeHeader = event.request.headers.get('range');
+    if(!isAudio || !rangeHeader) return cached;
+
+    const buffer = await cached.clone().arrayBuffer();
+    const total = buffer.byteLength;
+    const match = /bytes=(\d*)-(\d*)/.exec(rangeHeader);
+    let start = match && match[1] ? parseInt(match[1], 10) : 0;
+    let end = match && match[2] ? parseInt(match[2], 10) : total - 1;
+    if(isNaN(start)) start = 0;
+    if(isNaN(end) || end >= total) end = total - 1;
+    const slice = buffer.slice(start, end + 1);
+
+    return new Response(slice, {
+      status: 206,
+      statusText: 'Partial Content',
+      headers: {
+        'Content-Type': 'audio/mpeg',
+        'Content-Range': 'bytes ' + start + '-' + end + '/' + total,
+        'Content-Length': String(slice.byteLength),
+        'Accept-Ranges': 'bytes',
+      },
+    });
+  })());
 });
