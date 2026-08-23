@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>YCTAS! — Hispanic Countries + 1 Territory</title>
-<link rel="manifest" href="manifest.json?v=53">
+<link rel="manifest" href="manifest.json?v=54">
 <meta name="theme-color" content="#FF8A3D">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -15,7 +15,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Nunito+Sans:wght@400;600;700;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=53">
+<link rel="stylesheet" href="style.css?v=54">
 </head>
 <body>
 
@@ -130,7 +130,8 @@
        v50: three real offline fixes after direct testing — (1) precaching was firing all 90 files as one giant simultaneous burst, overwhelming real mobile connections and leaving an inconsistent partial cache; now fetches in small batches of 6 with automatic retries; (2) added a native "📲 Install app" button using the browser's own install prompt, instead of relying on people finding a buried browser-menu option; (3) the offline-status panel used position:fixed, which caused two separate display bugs (vanishing too fast on phone, not showing at all on laptop) — rebuilt as a plain in-page element instead, removing that whole class of bug
        v51: real fix for "audio only works offline after already playing it once online" — audio elements request files using a Range header (for seeking), even for short clips played from the start; a plainly-cached file doesn't automatically satisfy that request correctly. Rebuilt the fetch handler to construct a proper partial-content response from the cached file instead. Also toned down the two utility buttons (offline status, install) to sit side-by-side, smaller and muted — no longer competing visually with Quick Play
        v52: offline status now updates live during the save ("⏳ Saving for offline use: 23 of 90 files so far...") instead of staying silent until it's fully done — removes the guesswork around how long to wait before it's actually safe to go offline
-       v53: phone reported 92 files saved vs laptop's 90 for the same version — leading theory is a stale cached HTML page referencing old-versioned script URLs, causing both old and new copies to get cached side by side. Rather than guess further, the offline status check now lists any file with more than one version cached at once, so the actual cause can be seen directly instead of just a mismatched number -->
+       v53: phone reported 92 files saved vs laptop's 90 for the same version — leading theory is a stale cached HTML page referencing old-versioned script URLs, causing both old and new copies to get cached side by side. Rather than guess further, the offline status check now lists any file with more than one version cached at once, so the actual cause can be seen directly instead of just a mismatched number
+       v54: found it, via the v53 diagnostic — game3.js and match_games.js (added by the DTS merge) had script tags with no version number at all, unlike every other file in the app, and their data files (game3_data.json, match_games_data.json) were requested the same unversioned way in app.js. Both created a duplicate, unversioned copy alongside the properly-cached one. Fixed all 4 references to follow the same versioning convention as everything else -->
   <footer>YCTAS!™ · © 2026 The Spanish Fluency Centre · <a href="#" id="contactLink" class="contact-link">Questions? Contact us</a></footer>
 </section>
 
@@ -160,12 +161,12 @@
 <script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-firestore-compat.js"></script>
-<script src="auth.js?v=53"></script>
-<script src="songplayer.js?v=53"></script>
-<script src="tester.js?v=53"></script>
-<script src="eg.js?v=53"></script>
-<script src="match_games.js"></script>
-<script src="game3.js"></script>
-<script src="app.js?v=53"></script>
+<script src="auth.js?v=54"></script>
+<script src="songplayer.js?v=54"></script>
+<script src="tester.js?v=54"></script>
+<script src="eg.js?v=54"></script>
+<script src="match_games.js?v=54"></script>
+<script src="game3.js?v=54"></script>
+<script src="app.js?v=54"></script>
 </body>
 </html>
