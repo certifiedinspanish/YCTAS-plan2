@@ -50,12 +50,12 @@ async function main(){
   // http/https (e.g. GitHub Pages), not when double-clicking index.html
   // directly from disk, since browsers block fetch() on file:// URLs.
   const [countries, cuesCountries, cuesCapitals, mapData, compareData, egData] = await Promise.all([
-    loadJSON('countries.json?v=52'),
-    loadJSON('cues_countries.json?v=52'),
-    loadJSON('cues_capitals.json?v=52'),
-    loadJSON('map.json?v=52'),
-    loadJSON('compare.json?v=52'),
-    loadJSON('eg_data.json?v=52'),
+    loadJSON('countries.json?v=53'),
+    loadJSON('cues_countries.json?v=53'),
+    loadJSON('cues_capitals.json?v=53'),
+    loadJSON('map.json?v=53'),
+    loadJSON('compare.json?v=53'),
+    loadJSON('eg_data.json?v=53'),
   ]);
 
   const byKey = {};
@@ -211,7 +211,27 @@ async function main(){
       }
       const cache = await caches.open(ourCache);
       const entries = await cache.keys();
-      showSwStatus('✓ Offline copy found: ' + entries.length + ' files saved (' + ourCache + ').\nThis device can use the app without internet.');
+
+      // Group by base filename (ignoring the ?v=NN part) — if any file has
+      // MORE than one cached version sitting side by side, that directly
+      // explains a higher-than-expected total count, and shows exactly
+      // which files are duplicated instead of just a mystery number.
+      const byBaseName = {};
+      entries.forEach(req => {
+        const u = new URL(req.url);
+        const base = u.pathname;
+        (byBaseName[base] = byBaseName[base] || []).push(u.search || '(no version)');
+      });
+      const duplicates = Object.entries(byBaseName).filter(([, versions]) => versions.length > 1);
+
+      let msg = '✓ Offline copy found: ' + entries.length + ' files saved (' + ourCache + ').\nThis device can use the app without internet.';
+      if(duplicates.length){
+        msg += '\n\n⚠ ' + duplicates.length + ' file(s) have more than one version cached at once:\n';
+        duplicates.forEach(([base, versions]) => {
+          msg += base + ': ' + versions.join(', ') + '\n';
+        });
+      }
+      showSwStatus(msg);
     }catch(err){
       showSwStatus('Could not check offline status: ' + err.message);
     }
