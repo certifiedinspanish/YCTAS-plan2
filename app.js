@@ -15,6 +15,12 @@ if('serviceWorker' in navigator){
     });
   });
   navigator.serviceWorker.addEventListener('message', (event) => {
+    if(event.data && event.data.type === 'sw-cache-progress'){
+      const { saved, total } = event.data;
+      if(saved < total){
+        showSwStatus('⏳ Saving for offline use: ' + saved + ' of ' + total + ' files so far...');
+      }
+    }
     if(event.data && event.data.type === 'sw-cache-report'){
       const { total, failedCount, failed } = event.data;
       if(failedCount === 0){
@@ -44,12 +50,12 @@ async function main(){
   // http/https (e.g. GitHub Pages), not when double-clicking index.html
   // directly from disk, since browsers block fetch() on file:// URLs.
   const [countries, cuesCountries, cuesCapitals, mapData, compareData, egData] = await Promise.all([
-    loadJSON('countries.json?v=51'),
-    loadJSON('cues_countries.json?v=51'),
-    loadJSON('cues_capitals.json?v=51'),
-    loadJSON('map.json?v=51'),
-    loadJSON('compare.json?v=51'),
-    loadJSON('eg_data.json?v=51'),
+    loadJSON('countries.json?v=52'),
+    loadJSON('cues_countries.json?v=52'),
+    loadJSON('cues_capitals.json?v=52'),
+    loadJSON('map.json?v=52'),
+    loadJSON('compare.json?v=52'),
+    loadJSON('eg_data.json?v=52'),
   ]);
 
   const byKey = {};
