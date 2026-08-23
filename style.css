@@ -523,3 +523,26 @@ footer{text-align:center;color:var(--text-muted);font-size:12px;margin-top:26px;
 .mg-tile .mg-word{font-size:13px;}
 .mg-tile.matched{background:rgba(47,190,115,0.14);border-color:var(--green,#2FBE73);}
 .mg-back{font-size:22px;}
+
+/* Game 1 rebuild — "Match the Words" — Quizlet-style visible pairing,
+   sets of 6 instead of all 17 at once, weak-word recycling. */
+.vm-card{background:var(--surface, #fff);border-radius:16px;padding:20px 16px;max-width:480px;margin:0 auto;}
+.vm-progressWrap{margin:10px 0 16px;}
+.vm-progressLabel{font-size:11px;color:var(--text-muted);margin-bottom:4px;text-align:center;}
+.vm-progressBar{background:#EEE;border-radius:8px;height:8px;overflow:hidden;}
+.vm-progressFill{background:var(--green,#2FBE73);height:100%;transition:width 0.3s ease;}
+.vm-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;}
+.vm-tile{min-height:52px;border-radius:12px;border:2px solid var(--line, #E5E5E5);
+  background:#F7FBFF;color:var(--navy);font-family:inherit;font-weight:700;font-size:15px;
+  cursor:pointer;padding:10px 12px;display:flex;align-items:center;justify-content:center;
+  text-align:center;transition:transform 0.15s ease, background 0.15s ease, border-color 0.15s ease;}
+.vm-tile.selected{background:var(--panel-warm, #FFF3E0);border-color:var(--orange, #FF8A3D);
+  transform:scale(1.03);}
+.vm-tile.wrong{background:#FDEAEA;border-color:var(--coral, #E85B5B);animation:vm-shake 0.35s ease;}
+.vm-tile:active{transform:scale(0.97);}
+.vm-gone{visibility:hidden;}
+@keyframes vm-shake{
+  0%,100%{transform:translateX(0);}
+  25%{transform:translateX(-4px);}
+  75%{transform:translateX(4px);}
+}

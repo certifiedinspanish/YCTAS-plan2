@@ -50,12 +50,12 @@ async function main(){
   // http/https (e.g. GitHub Pages), not when double-clicking index.html
   // directly from disk, since browsers block fetch() on file:// URLs.
   const [countries, cuesCountries, cuesCapitals, mapData, compareData, egData] = await Promise.all([
-    loadJSON('countries.json?v=54'),
-    loadJSON('cues_countries.json?v=54'),
-    loadJSON('cues_capitals.json?v=54'),
-    loadJSON('map.json?v=54'),
-    loadJSON('compare.json?v=54'),
-    loadJSON('eg_data.json?v=54'),
+    loadJSON('countries.json?v=55'),
+    loadJSON('cues_countries.json?v=55'),
+    loadJSON('cues_capitals.json?v=55'),
+    loadJSON('map.json?v=55'),
+    loadJSON('compare.json?v=55'),
+    loadJSON('eg_data.json?v=55'),
   ]);
 
   const byKey = {};
@@ -161,9 +161,9 @@ async function main(){
       spotlightBuilt = true;
     }
     if(name === 'game1' && !game1Built){
-      game1Instance = createMatchGame({
+      game1Instance = createVocabMatch({
         container: document.getElementById('game1Root'),
-        dataSrc: 'match_games_data.json?v=54',
+        dataSrc: 'match_games_data.json?v=55',
         gameKey: 'game1',
       });
       game1Built = true;
@@ -171,7 +171,7 @@ async function main(){
     if(name === 'game2' && !game2Built){
       game2Instance = createMatchGame({
         container: document.getElementById('game2Root'),
-        dataSrc: 'match_games_data.json?v=54',
+        dataSrc: 'match_games_data.json?v=55',
         gameKey: 'game2',
       });
       game2Built = true;
@@ -179,7 +179,7 @@ async function main(){
     if(name === 'game3' && !game3Built){
       game3Instance = createGame3({
         container: document.getElementById('game3Root'),
-        dataSrc: 'game3_data.json?v=54',
+        dataSrc: 'game3_data.json?v=55',
       });
       game3Built = true;
     }
