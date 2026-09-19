@@ -170,10 +170,16 @@
 <script src="match_games.js?v=55"></script>
 <script src="game3.js?v=55"></script>
 <script src="app.js?v=55"></script>
-<script>
+ <script>
 (async function() {
-  const res = await fetch('status.json?_=' + Date.now());
-  const status = await res.json();
+  let status;
+  try {
+    const res = await fetch('status.json?_=' + Date.now());
+    status = await res.json();
+  } catch (e) {
+    document.body.innerHTML = '<div style="text-align:center;padding:60px;font-family:sans-serif;"><p>This preview requires an internet connection.</p></div>';
+    return;
+  }
 
   const expired = status.expires && new Date() > new Date(status.expires);
 
@@ -192,8 +198,21 @@
     }
     sessionStorage.setItem('appUnlocked', 'true');
   }
+
+  const email = 'info@suveconjugator.com';
+  const stamp = document.createElement('a');
+  stamp.href = 'mailto:' + email;
+  stamp.style.cssText = 'position:fixed;top:40px;right:-60px;transform:rotate(35deg);background:rgba(200,30,30,0.75);color:#fff;padding:8px 70px;text-align:center;font-family:sans-serif;font-weight:bold;font-size:13px;line-height:1.4;z-index:99999;text-decoration:none;box-shadow:0 2px 6px rgba(0,0,0,0.3);';
+  stamp.innerHTML = 'PREVIEW — NOT FOR SALE<br><span style="font-weight:normal;font-size:10px;">Feedback: ' + email + '</span>';
+  stamp.addEventListener('click', function(e) {
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(email).catch(() => {});
+    }
+  });
+  document.body.appendChild(stamp);
 })();
 </script>
+<script data-goatcounter="https://yctas-tracker.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
   <script data-goatcounter="https://yctas-tracker.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 </body>
 </html>
