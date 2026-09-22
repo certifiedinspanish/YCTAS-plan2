@@ -127,8 +127,14 @@ async function main(){
 
     // Pause whichever song player isn't currently visible, so audio
     // doesn't keep playing silently in the background after navigating away.
-    if(name !== 'countries' && countriesPlayer) countriesPlayer.pause();
-    if(name !== 'capitals' && capitalsPlayer) capitalsPlayer.pause();
+    if(name !== 'countries' && countriesPlayer){
+      if(countriesPlayer.getProgress) reportActivityProgress('countries-song', countriesPlayer.getProgress());
+      countriesPlayer.pause();
+    }
+    if(name !== 'capitals' && capitalsPlayer){
+      if(capitalsPlayer.getProgress) reportActivityProgress('capitals-song', capitalsPlayer.getProgress());
+      capitalsPlayer.pause();
+    }
     if(name !== 'practice' && practiceInstance) practiceInstance.pause();
     if(name !== 'spotlight' && spotlightInstance) spotlightInstance.pause();
     if(name !== 'game1' && game1Instance){

@@ -339,6 +339,11 @@ function createSongPlayer(opts) {
 
   // Pause this song's audio if the user navigates away to another view
   return {
-    pause(){ el.player.pause(); el.playBtn.textContent = '▶'; }
+    pause(){ el.player.pause(); el.playBtn.textContent = '▶'; },
+    getProgress(){
+      const dur = el.player.duration || 0;
+      if(!dur) return 0;
+      return Math.round((el.player.currentTime / dur) * 100);
+    }
   };
 }
