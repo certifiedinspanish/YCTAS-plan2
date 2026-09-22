@@ -201,6 +201,8 @@
   // --- Student code tracking ---
   const TRACK_URL = 'https://script.google.com/macros/s/AKfycbxCFSS1BFORF55zUjgrYus8-AKYJALKbT1poUodllGUIVgnBgVSD1_PTVCZaBMwjxv6/exec';
   const APP_NAME = 'yctas';
+  window.TRACK_URL = TRACK_URL;
+  window.APP_NAME = APP_NAME;
 
   let studentCode = localStorage.getItem('studentCode');
   if (!studentCode) {
@@ -209,6 +211,7 @@
       localStorage.setItem('studentCode', studentCode);
     }
   }
+  window.studentCode = studentCode;
 
   if (studentCode) {
     fetch(TRACK_URL, {

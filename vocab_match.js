@@ -193,5 +193,5 @@ function createVocabMatch(opts) {
   }
 
   load();
-  return { pause };
+  return { pause, getProgress: () => Math.round(masteredCount() / allPairs.length * 100) };
 }
