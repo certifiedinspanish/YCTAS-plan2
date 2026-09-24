@@ -1014,6 +1014,10 @@ function createTester(opts) {
   return {
     pause: pauseReferenceAudio,
     refresh: refreshFromStorage,
+    getProgress(){
+      const masteredN = countries.filter(c => isMastered(progress, c.key)).length;
+      return Math.round(masteredN / 20 * 100);
+    },
     quickPlay(){
       const modes = ['c2cap', 'cap2c', 'order', 'orderCap', 'pop', 'area'];
       const pick = modes[Math.floor(Math.random() * modes.length)];

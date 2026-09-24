@@ -87,6 +87,22 @@ async function main(){
   let game2Built = false;
   let game3Instance = null;
   let game3Built = false;
+  let currentView = 'home';
+
+  window.reportCurrentActivityOnExit = function(){
+    if(currentView === 'countries' && countriesPlayer && countriesPlayer.getProgress){
+      reportActivityProgress('countries-song', countriesPlayer.getProgress());
+    }
+    if(currentView === 'capitals' && capitalsPlayer && capitalsPlayer.getProgress){
+      reportActivityProgress('capitals-song', capitalsPlayer.getProgress());
+    }
+    if(currentView === 'game1' && game1Instance && game1Instance.getProgress){
+      reportActivityProgress('vocab-match', game1Instance.getProgress());
+    }
+    if(currentView === 'practice' && practiceInstance && practiceInstance.getProgress){
+      reportActivityProgress('practice-games', practiceInstance.getProgress());
+    }
+  };
 
   const views = {
     home: document.getElementById('view-home'),
@@ -119,6 +135,7 @@ async function main(){
   }
 
   function showView(name){
+    currentView = name;
     Object.entries(views).forEach(([key, node]) => {
       node.classList.toggle('hidden', key !== name);
     });
@@ -135,7 +152,10 @@ async function main(){
       if(capitalsPlayer.getProgress) reportActivityProgress('capitals-song', capitalsPlayer.getProgress());
       capitalsPlayer.pause();
     }
-    if(name !== 'practice' && practiceInstance) practiceInstance.pause();
+    if(name !== 'practice' && practiceInstance){
+      if(practiceInstance.getProgress) reportActivityProgress('practice-games', practiceInstance.getProgress());
+      practiceInstance.pause();
+    }
     if(name !== 'spotlight' && spotlightInstance) spotlightInstance.pause();
     if(name !== 'game1' && game1Instance){
       if(game1Instance.getProgress) reportActivityProgress('vocab-match', game1Instance.getProgress());
