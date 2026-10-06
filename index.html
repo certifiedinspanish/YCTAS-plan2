@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>YCTAS! — Hispanic Countries + 1 Territory</title>
-<link rel="manifest" href="manifest.json?v=57">
+<link rel="manifest" href="manifest.json?v=58">
 <meta name="theme-color" content="#FF8A3D">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -15,7 +15,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Nunito+Sans:wght@400;600;700;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=57">
+<link rel="stylesheet" href="style.css?v=58">
 </head>
 <body>
 
@@ -163,14 +163,46 @@
 <script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-firestore-compat.js"></script>
-<script src="auth.js?v=57"></script>
-<script src="songplayer.js?v=57"></script>
-<script src="tester.js?v=57"></script>
-<script src="eg.js?v=57"></script>
-<script src="vocab_match.js?v=57"></script>
-<script src="word_search.js?v=57"></script>
-<script src="match_games.js?v=57"></script>
-<script src="game3.js?v=57"></script>
-<script src="app.js?v=57"></script>
+<script src="auth.js?v=58"></script>
+<script src="songplayer.js?v=58"></script>
+<script src="tester.js?v=58"></script>
+<script src="eg.js?v=58"></script>
+<script src="vocab_match.js?v=58"></script>
+<script src="word_search.js?v=58"></script>
+<script src="match_games.js?v=58"></script>
+<script src="game3.js?v=58"></script>
+<script src="app.js?v=58"></script>
+ <script>
+(async function() {
+  let status;
+  try {
+    const res = await fetch('status.json?_=' + Date.now());
+    status = await res.json();
+  } catch (e) {
+    return; // if the check fails, just let the app load normally
+  }
+
+  const expired = status.expires && new Date() > new Date(status.expires);
+
+  if (!status.active || expired) {
+    document.body.innerHTML = `<div style="text-align:center;padding:60px;font-family:sans-serif;">
+      <p>${status.offlineMessage}</p></div>`;
+    return;
+  }
+
+  const email = 'info@suveconjugator.com';
+  const stamp = document.createElement('a');
+  stamp.href = 'mailto:' + email;
+  stamp.style.cssText = 'position:fixed;top:40px;right:-60px;transform:rotate(35deg);background:rgba(200,30,30,0.75);color:#fff;padding:8px 70px;text-align:center;font-family:sans-serif;font-weight:bold;font-size:13px;line-height:1.4;z-index:99999;text-decoration:none;box-shadow:0 2px 6px rgba(0,0,0,0.3);';
+  stamp.innerHTML = 'PREVIEW — NOT FOR SALE<br><span style="font-weight:normal;font-size:10px;">Feedback: ' + email + '</span>';
+  stamp.addEventListener('click', function(e) {
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(email).catch(() => {});
+    }
+  });
+  document.body.appendChild(stamp);
+})();
+</script>
+<script data-goatcounter="https://yctas-tracker.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 </body>
 </html>

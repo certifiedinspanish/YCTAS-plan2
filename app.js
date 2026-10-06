@@ -44,18 +44,28 @@ function showSwStatus(msg){
   el.classList.remove('hidden');
 }
 
+function reportActivityProgress(activityName, percent) {
+  if (!window.studentCode || !window.TRACK_URL) return;
+  fetch(window.TRACK_URL, {
+    method: 'POST',
+    mode: 'no-cors',
+    keepalive: true,
+    body: JSON.stringify({ code: window.studentCode, app: window.APP_NAME, eventType: activityName + '-progress', value: percent })
+  }).catch(() => {});
+}
+
 async function main(){
   // Load all shared data once. Flags are referenced by relative path (not
   // embedded), same as the audio files — this only works when served over
   // http/https (e.g. GitHub Pages), not when double-clicking index.html
   // directly from disk, since browsers block fetch() on file:// URLs.
   const [countries, cuesCountries, cuesCapitals, mapData, compareData, egData] = await Promise.all([
-    loadJSON('countries.json?v=57'),
-    loadJSON('cues_countries.json?v=57'),
-    loadJSON('cues_capitals.json?v=57'),
-    loadJSON('map.json?v=57'),
-    loadJSON('compare.json?v=57'),
-    loadJSON('eg_data.json?v=57'),
+    loadJSON('countries.json?v=58'),
+    loadJSON('cues_countries.json?v=58'),
+    loadJSON('cues_capitals.json?v=58'),
+    loadJSON('map.json?v=58'),
+    loadJSON('compare.json?v=58'),
+    loadJSON('eg_data.json?v=58'),
   ]);
 
   const byKey = {};
@@ -77,6 +87,22 @@ async function main(){
   let game2Built = false;
   let game3Instance = null;
   let game3Built = false;
+  let currentView = 'home';
+
+  window.reportCurrentActivityOnExit = function(){
+    if(currentView === 'countries' && countriesPlayer && countriesPlayer.getProgress){
+      reportActivityProgress('countries-song', countriesPlayer.getProgress());
+    }
+    if(currentView === 'capitals' && capitalsPlayer && capitalsPlayer.getProgress){
+      reportActivityProgress('capitals-song', capitalsPlayer.getProgress());
+    }
+    if(currentView === 'game1' && game1Instance && game1Instance.getProgress){
+      reportActivityProgress('vocab-match', game1Instance.getProgress());
+    }
+    if(currentView === 'practice' && practiceInstance && practiceInstance.getProgress){
+      reportActivityProgress('practice-games', practiceInstance.getProgress());
+    }
+  };
 
   const views = {
     home: document.getElementById('view-home'),
@@ -109,6 +135,7 @@ async function main(){
   }
 
   function showView(name){
+    currentView = name;
     Object.entries(views).forEach(([key, node]) => {
       node.classList.toggle('hidden', key !== name);
     });
@@ -117,11 +144,23 @@ async function main(){
 
     // Pause whichever song player isn't currently visible, so audio
     // doesn't keep playing silently in the background after navigating away.
-    if(name !== 'countries' && countriesPlayer) countriesPlayer.pause();
-    if(name !== 'capitals' && capitalsPlayer) capitalsPlayer.pause();
-    if(name !== 'practice' && practiceInstance) practiceInstance.pause();
+    if(name !== 'countries' && countriesPlayer){
+      if(countriesPlayer.getProgress) reportActivityProgress('countries-song', countriesPlayer.getProgress());
+      countriesPlayer.pause();
+    }
+    if(name !== 'capitals' && capitalsPlayer){
+      if(capitalsPlayer.getProgress) reportActivityProgress('capitals-song', capitalsPlayer.getProgress());
+      capitalsPlayer.pause();
+    }
+    if(name !== 'practice' && practiceInstance){
+      if(practiceInstance.getProgress) reportActivityProgress('practice-games', practiceInstance.getProgress());
+      practiceInstance.pause();
+    }
     if(name !== 'spotlight' && spotlightInstance) spotlightInstance.pause();
-    if(name !== 'game1' && game1Instance) game1Instance.pause();
+    if(name !== 'game1' && game1Instance){
+      if(game1Instance.getProgress) reportActivityProgress('vocab-match', game1Instance.getProgress());
+      game1Instance.pause();
+    }
     if(name !== 'game2' && game2Instance) game2Instance.pause();
     if(name !== 'game3' && game3Instance) game3Instance.pause();
 
@@ -150,7 +189,7 @@ async function main(){
         countriesAudioSrc: 'countries_song.mp3',
         capitalsAudioSrc: 'capitals_song.mp3',
         cuesCountries, cuesCapitals,
-        wordSearchSrc: 'word_search_data.json?v=57',
+        wordSearchSrc: 'word_search_data.json?v=58',
       });
       practiceBuilt = true;
     }
@@ -164,7 +203,7 @@ async function main(){
     if(name === 'game1' && !game1Built){
       game1Instance = createVocabMatch({
         container: document.getElementById('game1Root'),
-        dataSrc: 'match_games_data.json?v=57',
+        dataSrc: 'match_games_data.json?v=58',
         gameKey: 'game1',
       });
       game1Built = true;
@@ -172,7 +211,7 @@ async function main(){
     if(name === 'game2' && !game2Built){
       game2Instance = createMatchGame({
         container: document.getElementById('game2Root'),
-        dataSrc: 'match_games_data.json?v=57',
+        dataSrc: 'match_games_data.json?v=58',
         gameKey: 'game2',
       });
       game2Built = true;
@@ -180,7 +219,7 @@ async function main(){
     if(name === 'game3' && !game3Built){
       game3Instance = createGame3({
         container: document.getElementById('game3Root'),
-        dataSrc: 'game3_data.json?v=57',
+        dataSrc: 'game3_data.json?v=58',
       });
       game3Built = true;
     }

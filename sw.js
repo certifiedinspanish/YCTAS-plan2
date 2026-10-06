@@ -1,12 +1,12 @@
 // YCTAS! Plan 2 — offline support (service worker)
-const CACHE_NAME = 'yctas-plan2-v57';
+const CACHE_NAME = 'yctas-plan2-v58';
 
 const FILES_TO_CACHE = [
   './',
-  'app.js?v=57',
+  'app.js?v=58',
   'apple-touch-icon.png',
   'argentina.png',
-  'auth.js?v=57',
+  'auth.js?v=58',
   'bolivia.png',
   'capitals_song.mp3',
   'chile.png',
@@ -51,17 +51,17 @@ const FILES_TO_CACHE = [
   'clip_uruguay.mp3',
   'clip_venezuela.mp3',
   'colombia.png',
-  'compare.json?v=57',
+  'compare.json?v=58',
   'costa_rica.png',
-  'countries.json?v=57',
+  'countries.json?v=58',
   'countries_song.mp3',
   'cuba.png',
-  'cues_capitals.json?v=57',
-  'cues_countries.json?v=57',
+  'cues_capitals.json?v=58',
+  'cues_countries.json?v=58',
   'ecuador.png',
-  'eg.js?v=57',
+  'eg.js?v=58',
   'eg_capital.mp3',
-  'eg_data.json?v=57',
+  'eg_data.json?v=58',
   'eg_flag.png',
   'eg_gentilicio.mp3',
   'eg_malabo.mp3',
@@ -69,17 +69,17 @@ const FILES_TO_CACHE = [
   'el_salvador.png',
   'equatorial_guinea.png',
   'espana.png',
-  'game3.js?v=57',
-  'game3_data.json?v=57',
+  'game3.js?v=58',
+  'game3_data.json?v=58',
   'guatemala.png',
   'honduras.png',
   'icon-192.png',
   'icon-512.png',
   'index.html',
-  'manifest.json?v=57',
-  'map.json?v=57',
-  'match_games.js?v=57',
-  'match_games_data.json?v=57',
+  'manifest.json?v=58',
+  'map.json?v=58',
+  'match_games.js?v=58',
+  'match_games_data.json?v=58',
   'mexico.png',
   'nicaragua.png',
   'panama.png',
@@ -87,14 +87,14 @@ const FILES_TO_CACHE = [
   'peru.png',
   'puerto_rico.png',
   'republica_dominicana.png',
-  'songplayer.js?v=57',
-  'style.css?v=57',
-  'tester.js?v=57',
+  'songplayer.js?v=58',
+  'style.css?v=58',
+  'tester.js?v=58',
   'uruguay.png',
   'venezuela.png',
-  'vocab_match.js?v=57',
-  'word_search.js?v=57',
-  'word_search_data.json?v=57',
+  'vocab_match.js?v=58',
+  'word_search.js?v=58',
+  'word_search_data.json?v=58',
 ];
 
 self.addEventListener('install', (event) => {
@@ -158,6 +158,10 @@ self.addEventListener('fetch', (event) => {
   if (new URL(event.request.url).origin !== location.origin) return;
 
   const url = new URL(event.request.url);
+  // The preview kill-switch check (status.json) must always hit the network and
+  // never be cached: each visit uses a fresh ?_= timestamp, so caching it would
+  // pile up one stale copy per visit. Offline, the page's own try/catch lets the app load.
+  if (/\/status\.json$/.test(url.pathname)) return;
   const cacheKey = url.pathname + url.search;
   const isAudio = /\.mp3(\?|$)/.test(url.pathname);
 
