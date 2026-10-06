@@ -1,5 +1,5 @@
 function createTester(opts) {
-  const { container, countries, flags, compareData, countriesAudioSrc, capitalsAudioSrc, cuesCountries, cuesCapitals } = opts;
+  const { container, countries, flags, compareData, countriesAudioSrc, capitalsAudioSrc, cuesCountries, cuesCapitals, wordSearchSrc } = opts;
 
   container.innerHTML = `
     <div class="streakflame" data-el="dailyStreakWrap">
@@ -30,7 +30,9 @@ function createTester(opts) {
       <button class="modebtn" data-mode="orderCap">Capitals Order</button>
       <button class="modebtn" data-mode="pop">Compare: People</button>
       <button class="modebtn" data-mode="area">Compare: Size</button>
+      <button class="modebtn modebtn-ws" data-mode="wordsearch">🔎 Word Search</button>
     </div>
+    <div class="ws-host hidden" data-el="wsHost"></div>
     <div class="progressbar" data-el="masteryBar">
       <span data-el="masteredCount">⭐ 0 / 20 earned</span>
       <div class="progresstrack"><div class="progressfill" data-el="progressFill"></div></div>
@@ -233,6 +235,7 @@ function createTester(opts) {
   let streaks = loadStreaks();
   let dailyStreak = loadDailyStreak();
   let mode = 'c2cap';
+  let wordSearch = null;
   let lastComparePair = null;
   let browsing = false;
 
@@ -937,6 +940,23 @@ function createTester(opts) {
       if(btn.dataset.mode === undefined) return; // dynamic Easy/Challenge buttons share this class but aren't top-nav modes
       container.querySelectorAll('.modebtn[data-mode]').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
+      if(btn.dataset.mode === 'wordsearch'){
+        // Word Search is its own practice-only game: hide the star/streak/quiz furniture
+        mode = 'wordsearch';
+        pauseReferenceAudio();
+        ['masteryBar','streakBar','streakHint','browseBtn','qcard','finale','starGrid','stargridLabel','resetLink','scrollHint']
+          .forEach(k => { if(el[k]) el[k].style.display = 'none'; });
+        el.wsHost.classList.remove('hidden');
+        if(!wordSearch && typeof createWordSearch === 'function'){
+          wordSearch = createWordSearch({ container: el.wsHost, dataSrc: wordSearchSrc, setKey: 'countries' });
+        }
+        if(wordSearch) wordSearch.show();
+        return;
+      }
+      if(el.wsHost && !el.wsHost.classList.contains('hidden')){
+        el.wsHost.classList.add('hidden');
+        ['masteryBar','streakBar','streakHint','browseBtn','qcard','finale','starGrid','stargridLabel','resetLink','scrollHint'].forEach(k => { if(el[k]) el[k].style.display = ''; });
+      }
       const leavingSequence = (mode === 'sequence' && btn.dataset.mode !== 'sequence');
       mode = btn.dataset.mode;
       if(leavingSequence){
@@ -988,7 +1008,7 @@ function createTester(opts) {
   if('IntersectionObserver' in window){
     const hintObserver = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
-        el.scrollHint.classList.toggle('hidden', entry.isIntersecting);
+        el.scrollHint.classList.toggle('hidden', entry.isIntersecting || mode === 'wordsearch');
       });
     }, { threshold: 0.1 });
     hintObserver.observe(el.starGrid);
@@ -1014,10 +1034,6 @@ function createTester(opts) {
   return {
     pause: pauseReferenceAudio,
     refresh: refreshFromStorage,
-    getProgress(){
-      const masteredN = countries.filter(c => isMastered(progress, c.key)).length;
-      return Math.round(masteredN / 20 * 100);
-    },
     quickPlay(){
       const modes = ['c2cap', 'cap2c', 'order', 'orderCap', 'pop', 'area'];
       const pick = modes[Math.floor(Math.random() * modes.length)];

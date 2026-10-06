@@ -1,0 +1,338 @@
+{
+ "countries": {
+  "title": "Word Search: Countries",
+  "names": [
+   "Argentina",
+   "Bolivia",
+   "Chile",
+   "Colombia",
+   "Costa Rica",
+   "Cuba",
+   "Ecuador",
+   "El Salvador",
+   "España",
+   "Guatemala",
+   "Honduras",
+   "México",
+   "Nicaragua",
+   "Panamá",
+   "Paraguay",
+   "Perú",
+   "Puerto Rico",
+   "La República Dominicana",
+   "Uruguay",
+   "Venezuela",
+   "La República de Guinea Ecuatorial"
+  ],
+  "rounds": [
+   {
+    "id": "c_01",
+    "word": "en",
+    "en": "in, on",
+    "target": "Argentina"
+   },
+   {
+    "id": "c_02",
+    "word": "tina",
+    "en": "tub",
+    "target": "Argentina"
+   },
+   {
+    "id": "c_03",
+    "word": "via",
+    "en": "road",
+    "target": "Bolivia"
+   },
+   {
+    "id": "c_04",
+    "word": "le",
+    "en": "to him",
+    "target": "Chile"
+   },
+   {
+    "id": "c_05",
+    "word": "col",
+    "en": "cabbage",
+    "target": "Colombia"
+   },
+   {
+    "id": "c_06",
+    "word": "costa",
+    "en": "coast",
+    "target": "Costa Rica"
+   },
+   {
+    "id": "c_07",
+    "word": "rica",
+    "en": "rich",
+    "target": "Costa Rica"
+   },
+   {
+    "id": "c_08",
+    "word": "cuba",
+    "en": "barrel",
+    "target": "Cuba"
+   },
+   {
+    "id": "c_09",
+    "word": "la",
+    "en": "the",
+    "target": "La República Dominicana"
+   },
+   {
+    "id": "c_10",
+    "word": "mi",
+    "en": "my",
+    "target": "La República Dominicana"
+   },
+   {
+    "id": "c_11",
+    "word": "Salvador",
+    "en": "Saviour",
+    "target": "El Salvador"
+   },
+   {
+    "id": "c_12",
+    "word": "sal",
+    "en": "salt",
+    "target": "El Salvador"
+   },
+   {
+    "id": "c_13",
+    "word": "es",
+    "en": "is",
+    "target": "España"
+   },
+   {
+    "id": "c_14",
+    "word": "mala",
+    "en": "bad",
+    "target": "Guatemala"
+   },
+   {
+    "id": "c_15",
+    "word": "te",
+    "en": "to you",
+    "target": "Guatemala"
+   },
+   {
+    "id": "c_16",
+    "word": "cara",
+    "en": "face",
+    "target": "Nicaragua"
+   },
+   {
+    "id": "c_17",
+    "word": "pan",
+    "en": "bread",
+    "target": "Panamá"
+   },
+   {
+    "id": "c_18",
+    "word": "para",
+    "en": "for",
+    "target": "Paraguay"
+   },
+   {
+    "id": "c_19",
+    "word": "agua",
+    "en": "water",
+    "target": "Paraguay"
+   },
+   {
+    "id": "c_20",
+    "word": "puerto",
+    "en": "port",
+    "target": "Puerto Rico"
+   },
+   {
+    "id": "c_21",
+    "word": "rico",
+    "en": "rich",
+    "target": "Puerto Rico"
+   },
+   {
+    "id": "c_22",
+    "word": "ay",
+    "en": "oh",
+    "target": "Uruguay"
+   },
+   {
+    "id": "c_23",
+    "word": "ven",
+    "en": "come",
+    "target": "Venezuela"
+   },
+   {
+    "id": "c_24",
+    "word": "el",
+    "en": "the",
+    "target": "Venezuela"
+   },
+   {
+    "id": "c_25",
+    "word": "de",
+    "en": "of",
+    "target": "La República de Guinea Ecuatorial"
+   },
+   {
+    "id": "c_26",
+    "word": "al",
+    "en": "to the",
+    "target": "La República de Guinea Ecuatorial"
+   }
+  ],
+  "kind": "country",
+  "tab": "Countries"
+ },
+ "capitals": {
+  "title": "Word Search: Capitals",
+  "tab": "Capitals",
+  "kind": "capital",
+  "names": [
+   "Buenos Aires",
+   "La Paz",
+   "Santiago",
+   "Bogotá",
+   "San José",
+   "La Habana",
+   "Quito",
+   "San Salvador",
+   "Madrid",
+   "Guatemala",
+   "Tegucigalpa",
+   "México",
+   "Managua",
+   "Panamá",
+   "Asunción",
+   "Lima",
+   "San Juan",
+   "Santo Domingo",
+   "Montevideo",
+   "Caracas",
+   "Ciudad de la Paz"
+  ],
+  "rounds": [
+   {
+    "id": "k_01",
+    "word": "bueno",
+    "en": "good",
+    "target": "Buenos Aires"
+   },
+   {
+    "id": "k_02",
+    "word": "aire",
+    "en": "air",
+    "target": "Buenos Aires"
+   },
+   {
+    "id": "k_03",
+    "word": "la",
+    "en": "the",
+    "target": "La Paz"
+   },
+   {
+    "id": "k_04",
+    "word": "san",
+    "en": "saint, holy",
+    "target": "San José"
+   },
+   {
+    "id": "k_05",
+    "word": "haba",
+    "en": "bean",
+    "target": "La Habana"
+   },
+   {
+    "id": "k_06",
+    "word": "santo",
+    "en": "saint, holy",
+    "target": "Santo Domingo"
+   },
+   {
+    "id": "k_07",
+    "word": "domingo",
+    "en": "Sunday",
+    "target": "Santo Domingo"
+   },
+   {
+    "id": "k_08",
+    "word": "quito",
+    "en": "I remove",
+    "target": "Quito"
+   },
+   {
+    "id": "k_09",
+    "word": "salva",
+    "en": "saves",
+    "target": "San Salvador"
+   },
+   {
+    "id": "k_10",
+    "word": "va",
+    "en": "goes",
+    "target": "San Salvador"
+   },
+   {
+    "id": "k_11",
+    "word": "mala",
+    "en": "bad",
+    "target": "Guatemala"
+   },
+   {
+    "id": "k_12",
+    "word": "te",
+    "en": "to you",
+    "target": "Tegucigalpa"
+   },
+   {
+    "id": "k_13",
+    "word": "agua",
+    "en": "water",
+    "target": "Managua"
+   },
+   {
+    "id": "k_14",
+    "word": "pan",
+    "en": "bread",
+    "target": "Panamá"
+   },
+   {
+    "id": "k_15",
+    "word": "un",
+    "en": "a, one",
+    "target": "Asunción"
+   },
+   {
+    "id": "k_16",
+    "word": "lima",
+    "en": "lime",
+    "target": "Lima"
+   },
+   {
+    "id": "k_17",
+    "word": "monte",
+    "en": "mountain",
+    "target": "Montevideo"
+   },
+   {
+    "id": "k_18",
+    "word": "cara",
+    "en": "face",
+    "target": "Caracas"
+   },
+   {
+    "id": "k_19",
+    "word": "ciudad",
+    "en": "city",
+    "target": "Ciudad de la Paz"
+   },
+   {
+    "id": "k_20",
+    "word": "de",
+    "en": "of",
+    "target": "Ciudad de la Paz"
+   }
+  ]
+ }
+}
