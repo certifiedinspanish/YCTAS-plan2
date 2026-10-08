@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>YCTAS! — Hispanic Countries + 1 Territory</title>
-<link rel="manifest" href="manifest.json?v=58">
+<link rel="manifest" href="manifest.json?v=59">
 <meta name="theme-color" content="#FF8A3D">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -15,7 +15,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Nunito+Sans:wght@400;600;700;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=58">
+<link rel="stylesheet" href="style.css?v=59">
 </head>
 <body>
 
@@ -134,6 +134,7 @@
        v54: found it, via the v53 diagnostic — game3.js and match_games.js (added by the DTS merge) had script tags with no version number at all, unlike every other file in the app, and their data files (game3_data.json, match_games_data.json) were requested the same unversioned way in app.js. Both created a duplicate, unversioned copy alongside the properly-cached one. Fixed all 4 references to follow the same versioning convention as everything else
        v55: DTS Game 1 ("Match the Words") rebuilt per direct feedback — was all 17 pairs at once with flip-tile guessing; now pulls 6 at a time, everything visible with tap-to-pair (no hidden flip tiles), and recycles words based on a per-word 0-3 mastery level saved on the device, so weak words come back sooner. Game 1 remains completely hidden — this is an upgrade to unreleased content, not a reveal. Game 2 and its engine untouched -->
   <!-- v57 (same content as the v56 build, renamed to avoid a version-number clash): NEW "Word Search" practice game (countries, 25 rounds, one per hidden word) in Practice & Games. Practice-only, own storage key, accent-exact matching. New files: word_search.js, word_search_data.json. Countries (26 rounds) and Capitals (20 rounds) tabs. -->
+<!-- v59: Word Search now shows a small note about the two one-letter words (a = to, o = or) that are left out of the game because they appear in almost every name. -->
 <footer>YCTAS!™ · © 2026 The Spanish Fluency Centre · <a href="#" id="contactLink" class="contact-link">Questions? Contact us</a></footer>
 </section>
 
@@ -163,15 +164,15 @@
 <script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-firestore-compat.js"></script>
-<script src="auth.js?v=58"></script>
-<script src="songplayer.js?v=58"></script>
-<script src="tester.js?v=58"></script>
-<script src="eg.js?v=58"></script>
-<script src="vocab_match.js?v=58"></script>
-<script src="word_search.js?v=58"></script>
-<script src="match_games.js?v=58"></script>
-<script src="game3.js?v=58"></script>
-<script src="app.js?v=58"></script>
+<script src="auth.js?v=59"></script>
+<script src="songplayer.js?v=59"></script>
+<script src="tester.js?v=59"></script>
+<script src="eg.js?v=59"></script>
+<script src="vocab_match.js?v=59"></script>
+<script src="word_search.js?v=59"></script>
+<script src="match_games.js?v=59"></script>
+<script src="game3.js?v=59"></script>
+<script src="app.js?v=59"></script>
  <script>
 (async function() {
   let status;

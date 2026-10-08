@@ -99,6 +99,20 @@ function createWordSearch(opts) {
       </div>`;
   }
 
+  // Two one-letter words that are inside almost every name, so they can't be rounds.
+  // Shown quietly under the instructions: the Spanish letter is the focus, English is small.
+  function tinyWordsNote() {
+    return `
+      <div class="ws-tiny">
+        <div class="ws-tiny-t">Two tiny words we left out</div>
+        <div class="ws-tiny-row">
+          <div class="ws-tiny-w"><span class="ws-tiny-es">a</span><span class="ws-tiny-en">to</span></div>
+          <div class="ws-tiny-w"><span class="ws-tiny-es">o</span><span class="ws-tiny-en">or</span></div>
+        </div>
+        <p class="ws-tiny-p">These two Spanish words are hiding in almost every name, so they are not part of the game. As you play, see how many times you can spot them!</p>
+      </div>`;
+  }
+
   function startRound(i) {
     idx = i; phase = 'choose';
     choices = makeChoices(rounds[i]);
@@ -123,6 +137,7 @@ function createWordSearch(opts) {
         <button type="button" class="ws-next hidden" data-el="next"></button>
       </div>
       ${instructions()}
+      ${tinyWordsNote()}
       <span class="ws-restart" data-el="restart">Start over from Round 1</span>`;
     const q = s => root.querySelector('[data-el="' + s + '"]');
     bindTabs();
@@ -270,7 +285,8 @@ function createWordSearch(opts) {
         <div class="ws-bar"><div class="ws-fill" style="width:100%"></div></div>
         <p class="ws-fin-p">${n} of ${N} hidden words discovered. Now you know what is hiding inside these names!</p>
         <button type="button" class="ws-next" data-el="again">🔁 Play again</button>
-      </div>`;
+      </div>
+      ${tinyWordsNote()}`;
     bindTabs();
     root.querySelector('[data-el="again"]').addEventListener('click', () => { state.pos = 0; save(); startRound(0); });
   }
